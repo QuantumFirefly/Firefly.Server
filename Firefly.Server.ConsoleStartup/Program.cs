@@ -14,9 +14,9 @@ namespace Firefly.Server.ConsoleStartup
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
                 .InformationalVersion;
 
-            Console.WriteLine($"Firefly Server v{version}");
+            Console.WriteLine($"Firefly Server v{version} Booting up...");
 
-            Console.WriteLine($"Reading firefly.ini...");
+            Console.WriteLine($"Reading {LOCAL_SETTINGS_INI_FILE}...");
             try
             {
                 var dbConnectionStr = new LocalSettingsFactory(LOCAL_SETTINGS_INI_FILE, "Production").Build();
@@ -25,6 +25,8 @@ namespace Firefly.Server.ConsoleStartup
             {
                 Console.WriteLine($"ERROR: Unable to read from {LOCAL_SETTINGS_INI_FILE}. {ex.Message}.");
             }
+
+            // TODO - Move this into Worker.
         }
     }
 }
