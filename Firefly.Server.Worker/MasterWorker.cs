@@ -32,7 +32,8 @@ namespace Firefly.Server.Worker
                 var messages = new List<String>();
                 if(!localSettings.Validate(ref messages))
                 {
-                    throw new Exception(message);
+                    var exMsg = string.Join("; ", messages);
+                    throw new Exception(exMsg);
                 }
             }
             catch (Exception ex)
