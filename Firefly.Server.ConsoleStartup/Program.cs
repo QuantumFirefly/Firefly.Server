@@ -17,7 +17,7 @@ namespace Firefly.Server.ConsoleStartup
             var dbConnectionStr = new DbSettingsFactory("firefly.ini", "Production").Build();
             if (dbConnectionStr == null)
             {
-                Console.WriteLine($"ERROR: ");
+                Console.WriteLine($"ERROR: ffgdfgdfgsd ");
                 return;
             } //test123
 
