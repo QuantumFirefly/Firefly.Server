@@ -1,11 +1,13 @@
 ﻿namespace Firefly.Server.Worker
 {
-    public class Startup
+    public static class Startup
     {
 
-        public void Run()
+        public static async void Run()
         {
-            // Runs Firefly Server.
+            // Spawn one MasterWorker. Originally planned to spawn off a seperate thread, but as this thread will just sit idle, better to utilise the main thread for Master Worker.
+            var masterWorker = new MasterWorker();
+            await masterWorker.Start();
         }
 
     }

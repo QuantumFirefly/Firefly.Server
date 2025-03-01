@@ -5,7 +5,7 @@ namespace Firefly.Server.Core.Entitys
     public class DbConnectionSettings
     {
 
-        public EnumDatabaseMS DBMS { get; set; }
+        public EnumDataBaseMS DBMS { get; set; }
 
         public string Host { get; set; }
 

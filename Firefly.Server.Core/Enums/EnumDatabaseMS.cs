@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Enums
 {
-    public enum EnumDatabaseMS
+    public enum EnumDataBaseMS
     {
         PostgreSQL
     }
