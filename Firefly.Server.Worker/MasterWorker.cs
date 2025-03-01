@@ -27,7 +27,7 @@ namespace Firefly.Server.Worker
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
             try
             {
-                var localSettings = new LocalSettingsFactory(Constants.LOCAL_SETTINGS_INI_FILE, "Production").Build();
+                var localSettings = new LocalSettingsFactory(Constants.LOCAL_SETTINGS_INI_FILE, Constants.ENVIRONMENT_TYPE).Build();
 
                 var messages = new List<String>();
                 if(!localSettings.Validate(ref messages))
