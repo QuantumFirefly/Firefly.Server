@@ -14,8 +14,8 @@ namespace Firefly.Server.Core.Entitys
             DbConnectionSettings = new DbConnectionSettings();
             LogSettings = new LogSettings();
         }
-        public ISettings DbConnectionSettings { get; set; }
-        public ISettings LogSettings { get; set; }
+        public DbConnectionSettings DbConnectionSettings { get; set; }
+        public LogSettings LogSettings { get; set; }
 
         public bool Validate(ref List<string> messages)
         {
