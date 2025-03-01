@@ -28,6 +28,12 @@ namespace Firefly.Server.Worker
             try
             {
                 var localSettings = new LocalSettingsFactory(Constants.LOCAL_SETTINGS_INI_FILE, "Production").Build();
+
+                string message;
+                if(!localSettings.Validate(out message))
+                {
+                    throw new Exception(message);
+                }
             }
             catch (Exception ex)
             {

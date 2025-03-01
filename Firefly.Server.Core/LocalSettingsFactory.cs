@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Firefly.Server.Core.Entitys;
+using Firefly.Server.Core.Enums;
 
 namespace Firefly.Server.Core
 {
@@ -20,11 +21,11 @@ namespace Firefly.Server.Core
         {
             var data = new DbConnectionSettings();
 
-            var dbmsFullName = _dbSettings[$"{_environmentType}:DBMS"]; // TODO Convert to Enum
-            data.Host = _dbSettings[$"{_environmentType}:Host"];
-            data.Port = int.Parse(_dbSettings[$"{_environmentType}:Port"]);
-            data.Username = _dbSettings[$"{_environmentType}:Username"];
-            data.Password = _dbSettings[$"{_environmentType}:Password"];
+            data.DBMS = Enum.Parse<EnumDataBaseMS>((_dbSettings[$"Database-{_environmentType}:DBMS"] ?? "Null"));
+            data.Host = _dbSettings[$"Database-{_environmentType}:Host"] ?? "";
+            data.Port = int.Parse(_dbSettings[$"Database-{_environmentType}:Port"] ?? "0");
+            data.Username = _dbSettings[$"Database-{_environmentType}:Username"] ?? "";
+            data.Password = _dbSettings[$"Database-{_environmentType}:Password"] ?? "";
 
             return data;
 

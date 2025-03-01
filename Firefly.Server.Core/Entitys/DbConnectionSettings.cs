@@ -18,5 +18,10 @@ namespace Firefly.Server.Core.Entitys
         public string Password { get; set; }
 
         public string ConnectionString => $"Host={Host};Port={Port};Database={Database};Username={Username};Password={Password};";
+
+        public bool Validate(out string message)
+        {
+            // TODO Validate logic here. Return True if good, false if not and message.
+        }
     }
 }
