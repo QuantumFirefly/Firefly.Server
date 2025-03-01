@@ -14,6 +14,14 @@ namespace Firefly.Server.Core.Entitys
         }
         public DbConnectionSettings DbConnectionSettings { get; set; }
 
+        public bool Validate(ref List<string> messages)
+        {
+            bool validationPassed = true;
+
+            if (!DbConnectionSettings.Validate(ref messages)) validationPassed = false;
+
+            return validationPassed;
+        }
 
     }
 }

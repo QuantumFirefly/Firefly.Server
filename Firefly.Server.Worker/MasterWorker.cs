@@ -29,8 +29,8 @@ namespace Firefly.Server.Worker
             {
                 var localSettings = new LocalSettingsFactory(Constants.LOCAL_SETTINGS_INI_FILE, "Production").Build();
 
-                string message;
-                if(!localSettings.Validate(out message))
+                var messages = new List<String>();
+                if(!localSettings.Validate(ref messages))
                 {
                     throw new Exception(message);
                 }
