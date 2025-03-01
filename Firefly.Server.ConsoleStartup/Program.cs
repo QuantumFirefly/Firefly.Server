@@ -19,7 +19,7 @@ namespace Firefly.Server.ConsoleStartup
             {
                 Console.WriteLine($"ERROR: ");
                 return;
-            }
+            } //test123
 
             /*
              * 
