@@ -1,9 +1,10 @@
 ﻿using Firefly.Server.Core.Enums;
+using Firefly.Server.Core.Interfaces;
 using Firefly.Server.Worker;
 
 namespace Firefly.Server.Core.Entitys
 {
-    public class DbConnectionSettings
+    public class DbConnectionSettings : ISettings
     {
 
         public EnumDataBaseMS DBMS { get; set; }
