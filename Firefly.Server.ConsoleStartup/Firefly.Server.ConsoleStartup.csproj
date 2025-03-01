@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<Version>1$(GitBuildVersion)</Version>
+	<FileVersion>2$(GitBuildVersion)</FileVersion>
+	<AssemblyVersion>3$(GitBuildVersion)</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.7.115">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Firefly.Server.Core\Firefly.Server.Core.csproj" />
+    <ProjectReference Include="..\Firefly.Server.Worker\Firefly.Server.Worker.csproj" />
+  </ItemGroup>
+
+</Project>
