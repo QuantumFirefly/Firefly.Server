@@ -13,7 +13,7 @@ namespace Firefly.Server.Core.DbSettings
             .AddIniFile(IniFileName, optional: false, reloadOnChange: true)
             .Build();
             _environmentType = EnvironmentType;
-        }// test 123
+        }// test 123 456
 
         public DbConnectionSettings Build()
         {
