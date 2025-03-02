@@ -11,7 +11,7 @@ namespace Firefly.Server.Worker
         public const string ENVIRONMENT_TYPE = "Production"; // Can use some env flags later to swap between Production and dev
 
 
-        public const string LOCAL_SETTINGS_INI_FILE = "firefly.ini";
+        public const string LOCAL_SETTINGS_INI_FILE = "LocalSettings.ini";
         public const int LOWEST_PORT_ALLOWED = 1;
         public const int HIGHEST_PORT_ALLOWED = 65535;
         

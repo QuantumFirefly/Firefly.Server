@@ -24,6 +24,7 @@ namespace Firefly.Server.Core
             data.DbConnectionSettings.DBMS = Enum.Parse<EnumDataBaseMS>((_dbSettings[$"Database-{_environmentType}:DBMS"] ?? "Null"));
             data.DbConnectionSettings.Host = _dbSettings[$"Database-{_environmentType}:Host"] ?? "";
             data.DbConnectionSettings.Port = int.Parse(_dbSettings[$"Database-{_environmentType}:Port"] ?? "0");
+            data.DbConnectionSettings.DatabaseName = _dbSettings[$"Database-{_environmentType}:DatabaseName"] ?? "";
             data.DbConnectionSettings.Username = _dbSettings[$"Database-{_environmentType}:Username"] ?? "";
             data.DbConnectionSettings.Password = _dbSettings[$"Database-{_environmentType}:Password"] ?? "";
 
