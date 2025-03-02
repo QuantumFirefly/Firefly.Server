@@ -6,6 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="LocalSettings.ini" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="LocalSettings.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\Firefly.Server.Core\Firefly.Server.Core.csproj" />
 	</ItemGroup>
