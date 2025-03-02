@@ -51,10 +51,10 @@ namespace Firefly.Server.Worker
             localSettings.LogSettings.ApplySettingsToNLog();
 
 
-            while(true)
+            /*while(true)
             {
                 _log.Log(LogLevel.Info, "blah blah");
-            }
+            }*/
                 
             
     }
