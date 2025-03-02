@@ -22,10 +22,6 @@ namespace Firefly.Server.Core.Entitys;
 
     public string archiveDateFormat { get; set; }
 
-    // This setting is important for large corporates who need to ensure integrity of user data.
-    public bool redactPIIFromLogs { get; set; } = false; // PII - Personally identifying information. 
-    // TODO - Move this to be stored in database.
-
     public bool Validate(ref List<string> messages)
     {
         bool validationPassed = true;
