@@ -28,6 +28,9 @@ namespace Firefly.Server.Core
             data.DbConnectionSettings.Username = _dbSettings[$"Database-{_environmentType}:Username"] ?? "";
             data.DbConnectionSettings.Password = _dbSettings[$"Database-{_environmentType}:Password"] ?? "";
 
+            // TODO When translating ArchivePath turn % into #
+            // TODO ArchiveAboveSize Convert Mb to Bytes ( * 1048576 )
+
             return data;
 
         }

@@ -12,11 +12,11 @@ namespace Firefly.Server.Core.Entitys;
 
     public string archivePath { get; set; }
 
-    public FileArchivePeriod archiveEvery { get; set; } // Default: Day
+    public FileArchivePeriod archiveEvery { get; set; }
 
     public ArchiveNumberingMode archiveNumbering { get; set; }
 
-    public int maxArchiveFiles { get; set; } // Default: 10
+    public int maxArchiveFiles { get; set; }
 
     public long archiveAboveSize { get; set; }
 
