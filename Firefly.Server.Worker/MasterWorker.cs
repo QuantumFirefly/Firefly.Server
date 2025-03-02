@@ -16,7 +16,10 @@ namespace Firefly.Server.Worker
     internal class MasterWorker
     {
 
-        public MasterWorker() { } // For dependency injection.
+        ILogger _log;
+        public MasterWorker(ILogger? logService = null) {
+            _log = logService ?? LogManager.GetCurrentClassLogger();
+        }
 
         public async Task Start()
         {
@@ -47,13 +50,11 @@ namespace Firefly.Server.Worker
 
             localSettings.LogSettings.ApplySettingsToNLog();
 
-            ILogger Logger = LogManager.GetCurrentClassLogger();
-            /*while(true)
+
+            while(true)
             {
-                Logger.Info("Application started.");
-                Logger.Warn("This is a warning.");
-                Logger.Error("This is an error message.");
-            }*/
+                _log.Log(LogLevel.Info, "blah blah");
+            }
                 
             
     }
