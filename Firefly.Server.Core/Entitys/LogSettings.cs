@@ -6,7 +6,7 @@ namespace Firefly.Server.Core.Entitys;
     public class LogSettings : ISettings
 {
 
-    public LogLevel LogLevel { get; set; } = LogLevel.Off;
+    public LogLevel logLevel { get; set; } = LogLevel.Off;
     public string target { get; set; } = "File";
     public string filePath { get; set; }
 
