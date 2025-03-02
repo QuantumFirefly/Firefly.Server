@@ -1,4 +1,6 @@
 ﻿using Firefly.Server.Core;
+using Firefly.Server.Core.Entitys;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,9 +27,10 @@ namespace Firefly.Server.Worker
             Console.WriteLine($"Firefly Server v{version} Booting up...");
 
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
+            LocalSettings localSettings;
             try
             {
-                var localSettings = new LocalSettingsFactory(Constants.LOCAL_SETTINGS_INI_FILE, Constants.ENVIRONMENT_TYPE).Build();
+                localSettings = new LocalSettingsFactory(Constants.LOCAL_SETTINGS_INI_FILE, Constants.ENVIRONMENT_TYPE).Build();
 
                 var messages = new List<String>();
                 if(!localSettings.Validate(ref messages))
@@ -41,7 +44,19 @@ namespace Firefly.Server.Worker
                 Console.WriteLine($"ERROR: Unable to read from {Constants.LOCAL_SETTINGS_INI_FILE}. {ex.Message}.");
                 return;
             }
-        }
 
+            localSettings.LogSettings.ApplySettingsToNLog();
+
+            ILogger Logger = LogManager.GetCurrentClassLogger();
+            /*while(true)
+            {
+                Logger.Info("Application started.");
+                Logger.Warn("This is a warning.");
+                Logger.Error("This is an error message.");
+            }*/
+                
+            
     }
+
+}
 }

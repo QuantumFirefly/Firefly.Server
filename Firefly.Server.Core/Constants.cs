@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Firefly.Server.Worker
+namespace Firefly.Server.Core
 {
     public static class Constants
     {
@@ -14,6 +14,7 @@ namespace Firefly.Server.Worker
         public const string LOCAL_SETTINGS_INI_FILE = "LocalSettings.ini";
         public const int LOWEST_PORT_ALLOWED = 1;
         public const int HIGHEST_PORT_ALLOWED = 65535;
+        public const int MB_TO_BYTES = 1048576;
         
     }
     

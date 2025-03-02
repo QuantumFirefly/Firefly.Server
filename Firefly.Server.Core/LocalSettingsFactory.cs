@@ -31,7 +31,7 @@ namespace Firefly.Server.Core
             data.DbConnectionSettings.Password = _dbSettings[$"Database-{_environmentType}:Password"] ?? "";
 
             data.LogSettings.logLevel = LogLevel.FromString(_dbSettings[$"Logging:LogLevel"] ?? "Off");
-            data.LogSettings.target = _dbSettings[$"Logging:Target"] ?? "File";
+            data.LogSettings.target = _dbSettings[$"Logging:Target"] ?? "";
             data.LogSettings.filePath = _dbSettings[$"Logging:FilePath"] ?? "";
             data.LogSettings.archiveEvery = Enum.Parse<FileArchivePeriod>(_dbSettings[$"Logging:ArchiveEvery"] ?? "None");
             data.LogSettings.archiveNumbering = Enum.Parse<ArchiveNumberingMode>(_dbSettings[$"Logging:ArchiveNumbering"] ?? "");
@@ -53,7 +53,7 @@ namespace Firefly.Server.Core
             data.LogSettings.archivePath = data.LogSettings.archivePath.Replace("%", "#");
 
             // archiveAboveSize is taken from the ini files in MB. Convert to Bytes for NLog
-            data.LogSettings.archiveAboveSize *= 1048576;
+            data.LogSettings.archiveAboveSize *= Constants.MB_TO_BYTES;
         }
 
 

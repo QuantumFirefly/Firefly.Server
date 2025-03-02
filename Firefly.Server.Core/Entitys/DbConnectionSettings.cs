@@ -1,6 +1,5 @@
 ﻿using Firefly.Server.Core.Enums;
 using Firefly.Server.Core.Interfaces;
-using Firefly.Server.Worker;
 
 namespace Firefly.Server.Core.Entitys
 {
