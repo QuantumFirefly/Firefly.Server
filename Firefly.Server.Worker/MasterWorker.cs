@@ -39,7 +39,7 @@ namespace Firefly.Server.Worker
             _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
             
             /* TODO
-             * Connect to Database. Test can run some querys
+             * Connect to Database. Test can run some querys. Ensure Encryption is on.
              * Upgrade to latest version if needed (Creating tables, alter statements, etc). Is there a library I can use to do this? (EF Migrations? Might be far too verbose)
              * Import RemoteSettings from database table (need an appropiate name, FireFlySettings? Probably better to have a parent calss also that has both local & remote settings)
              * Create IRC Settings - and class hierachy for it.
