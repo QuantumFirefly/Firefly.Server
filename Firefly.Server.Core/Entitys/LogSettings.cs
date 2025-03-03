@@ -38,6 +38,8 @@ namespace Firefly.Server.Core.Entitys;
 
     public string archiveDateFormat { get; set; }
 
+    private string[] _targets => target.Split(",");
+
     public bool Validate(ref List<string> messages)
     {
         bool validationPassed = true;
@@ -81,36 +83,34 @@ namespace Firefly.Server.Core.Entitys;
         return validationPassed;
     }
 
-    public void ApplySettingsToNLog()
+    public static void ApplySettingsToNLog(LogSettings settingsToApply)
     {
-        // Set the LogLevel
         var loggingConfig = LogManager.Configuration;
+
+        // Set the LogLevel
         foreach (var rule in loggingConfig.LoggingRules)
         {
-            rule.SetLoggingLevels(logLevel, LogLevel.Fatal);
+            rule.SetLoggingLevels(settingsToApply.logLevel, LogLevel.Fatal);
 
             rule.Targets.Clear(); // Remove existing rules.
-            Array.ForEach(_targets, target => rule.Targets.Add(loggingConfig.FindTargetByName(target)));
+            Array.ForEach(settingsToApply._targets, target => rule.Targets.Add(loggingConfig.FindTargetByName(target)));
         }
 
-        // Override nlog.config with data from LocalSettings.ini
+        // Override nlog.config with data from provided instance of LogSettings
         var fileTarget = loggingConfig.FindTargetByName<FileTarget>("file");
         if (fileTarget != null)
         {
-            fileTarget.FileName = filePath;
-            fileTarget.ArchiveFileName = archivePath;
+            fileTarget.FileName = settingsToApply.filePath;
+            fileTarget.ArchiveFileName = settingsToApply.archivePath;
 
-            fileTarget.ArchiveEvery = archiveEvery;
-            fileTarget.MaxArchiveFiles = maxArchiveFiles;
-            fileTarget.ArchiveNumbering = archiveNumbering;
-            fileTarget.ArchiveAboveSize = archiveAboveSize;
-            fileTarget.ArchiveDateFormat = archiveDateFormat;
+            fileTarget.ArchiveEvery = settingsToApply.archiveEvery;
+            fileTarget.MaxArchiveFiles = settingsToApply.maxArchiveFiles;
+            fileTarget.ArchiveNumbering = settingsToApply.archiveNumbering;
+            fileTarget.ArchiveAboveSize = settingsToApply.archiveAboveSize;
+            fileTarget.ArchiveDateFormat = settingsToApply.archiveDateFormat;
 
         }
 
         LogManager.ReconfigExistingLoggers(); // Apply changes
     }
-
-    private string[] _targets => target.Split(",");
-
 }

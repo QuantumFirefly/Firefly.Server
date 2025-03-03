@@ -73,7 +73,7 @@ namespace Firefly.Server.Worker
 
             try
             {
-                localSettings.LogSettings.ApplySettingsToNLog();
+                LogSettings.ApplySettingsToNLog(localSettings.LogSettings);
             }
             catch (Exception ex)
             {
