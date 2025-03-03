@@ -40,23 +40,8 @@ namespace Firefly.Server.Core
             data.LogSettings.archiveAboveSize = long.Parse(_dbSettings[$"Logging:ArchiveAboveSize"] ?? "-1");
             data.LogSettings.archiveDateFormat = _dbSettings[$"Logging:ArchiveDateFormat"] ?? "";
 
-            _convertLogSettingsToNLog(ref data);
-
             return data;
 
         }
-
-        // Run transformation on log config provided by user into what NLog expects.
-        private void _convertLogSettingsToNLog(ref LocalSettings data)
-        {
-            // LocalSettings.ini takes % instead of # because hashes are considered comments in ini files.
-            data.LogSettings.archivePath = data.LogSettings.archivePath.Replace("%", "#");
-
-            // archiveAboveSize is taken from the ini files in MB. Convert to Bytes for NLog
-            data.LogSettings.archiveAboveSize *= Constants.MB_TO_BYTES;
-        }
-
-
-
     }
 }

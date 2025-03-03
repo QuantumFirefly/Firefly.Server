@@ -10,7 +10,14 @@ namespace Firefly.Server.Core.Entitys;
     public string target { get; set; } = "";
     public string filePath { get; set; }
 
-    public string archivePath { get; set; }
+    private string _archivePath;
+    public string archivePath { 
+        get => _archivePath;
+        set {
+            // LocalSettings.ini takes % instead of # because hashes are considered comments in ini files.
+            _archivePath = value.Replace("%", "#");
+        }
+    }
 
     public FileArchivePeriod archiveEvery { get; set; }
 
@@ -18,7 +25,16 @@ namespace Firefly.Server.Core.Entitys;
 
     public int maxArchiveFiles { get; set; }
 
-    public long archiveAboveSize { get; set; }
+    private long _archiveAboveSize;
+    public long archiveAboveSize
+    {
+        get => _archiveAboveSize;
+        set
+        {
+            // archiveAboveSize is taken from the ini files in MB. Convert to Bytes for NLog
+            _archiveAboveSize = value * Constants.MB_TO_BYTES;
+        }
+    }
 
     public string archiveDateFormat { get; set; }
 
