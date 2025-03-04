@@ -10,10 +10,9 @@ namespace Firefly.Server.ConsoleStartup
         
         public static void Main(string[] args) {
             // This is a seperate file because we will have other ways to launch in future. Such as Docker or Windows service.
-            Console.WriteLine($"Starting Firefly Server in Console Mode...");
+            Startup.Run("Console");
 
-            Startup.Run();
-
+            // Ensure any errors are visible before closing the console window.
             Console.WriteLine("Press any key to close...");
             Console.ReadKey();
         }
