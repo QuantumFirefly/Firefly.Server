@@ -1,5 +1,6 @@
 ﻿using Firefly.Server.Core.Enums;
 using Firefly.Server.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace Firefly.Server.Core.Entitys
 {
@@ -53,6 +54,19 @@ namespace Firefly.Server.Core.Entitys
             }
 
             return validationPassed;
+        }
+
+        public static DbConnectionSettings Build(IConfigurationRoot iniContent, string dbEnvironmentType) {
+            var data = new DbConnectionSettings();
+
+            data.DBMS = Enum.Parse<EnumDataBaseMS>((iniContent[$"Database-{dbEnvironmentType}:DBMS"] ?? "Null"));
+            data.Host = iniContent[$"Database-{dbEnvironmentType}:Host"] ?? "";
+            data.Port = int.Parse(iniContent[$"Database-{dbEnvironmentType}:Port"] ?? "-1");
+            data.DatabaseName = iniContent[$"Database-{dbEnvironmentType}:DatabaseName"] ?? "";
+            data.Username = iniContent[$"Database-{dbEnvironmentType}:Username"] ?? "";
+            data.Password = iniContent[$"Database-{dbEnvironmentType}:Password"] ?? "";
+
+            return data;
         }
     }
 }

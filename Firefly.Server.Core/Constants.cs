@@ -8,7 +8,7 @@ namespace Firefly.Server.Core
 {
     public static class Constants
     {
-        public const string ENVIRONMENT_TYPE = "Production"; // Can use some env flags later to swap between Production and dev
+        public const string DB_ENVIRONMENT_TYPE = "Production"; // Can use some env flags later to swap between Production and dev
 
 
         public const string LOCAL_SETTINGS_INI_FILE = "LocalSettings.ini";

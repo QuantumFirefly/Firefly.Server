@@ -32,7 +32,7 @@ namespace Firefly.Server.Worker
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
             LocalSettings localSettings;
-            if (!_importValidateAndApplyLocalSettings(out localSettings, Constants.LOCAL_SETTINGS_INI_FILE, Constants.ENVIRONMENT_TYPE)) {
+            if (!_importValidateAndApplyLocalSettings(out localSettings, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                 return;
             }
 
@@ -65,9 +65,9 @@ namespace Firefly.Server.Worker
 
         }
 
-        private bool _importValidateAndApplyLocalSettings(out LocalSettings localSettings, string iniFile, string dbEnvironment) {
+        private bool _importValidateAndApplyLocalSettings(out LocalSettings localSettings, string iniFile, string dbEnvironmentType) {
             try {
-                localSettings = new LocalSettingsFactory(iniFile, dbEnvironment).Build();
+                localSettings = LocalSettings.Build(iniFile, dbEnvironmentType);
 
                 var messages = new List<String>();
                 if (!localSettings.Validate(ref messages)) {

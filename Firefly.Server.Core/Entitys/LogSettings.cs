@@ -1,10 +1,12 @@
-﻿using Firefly.Server.Core.Interfaces;
+﻿using Firefly.Server.Core.Enums;
+using Firefly.Server.Core.Interfaces;
+using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Targets;
 
 namespace Firefly.Server.Core.Entitys;
     public class LogSettings : ISettings
-{
+    {
 
     public LogLevel logLevel { get; set; } = LogLevel.Off;
     public string target { get; set; } = "";
@@ -73,6 +75,22 @@ namespace Firefly.Server.Core.Entitys;
         
 
         return validationPassed;
+    }
+
+    public static LogSettings Build(IConfigurationRoot iniContent) {
+        var data = new LogSettings();
+
+        data.logLevel = LogLevel.FromString(iniContent[$"Logging:LogLevel"] ?? "Off");
+        data.target = iniContent[$"Logging:Target"] ?? "";
+        data.filePath = iniContent[$"Logging:FilePath"] ?? "";
+        data.archiveEvery = Enum.Parse<FileArchivePeriod>(iniContent[$"Logging:ArchiveEvery"] ?? "None");
+        data.archiveNumbering = Enum.Parse<ArchiveNumberingMode>(iniContent[$"Logging:ArchiveNumbering"] ?? "");
+        data.archivePath = iniContent[$"Logging:ArchivePath"] ?? "";
+        data.maxArchiveFiles = int.Parse(iniContent[$"Logging:MaxArchiveFiles"] ?? "-1");
+        data.archiveAboveSize = long.Parse(iniContent[$"Logging:ArchiveAboveSize"] ?? "-1");
+        data.archiveDateFormat = iniContent[$"Logging:ArchiveDateFormat"] ?? "";
+
+        return data;
     }
 
     public static void ApplySettingsToNLog(LogSettings settingsToApply) {
