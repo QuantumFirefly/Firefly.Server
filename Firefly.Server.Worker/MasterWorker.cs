@@ -22,8 +22,7 @@ namespace Firefly.Server.Worker
             _log = logService ?? LogManager.GetCurrentClassLogger();
         }
 
-        public async Task Start()
-        {
+        public async Task Start() {
             var version = Assembly.GetExecutingAssembly()
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
                 .InformationalVersion;
@@ -40,12 +39,10 @@ namespace Firefly.Server.Worker
             _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
 
             _log.Log(LogLevel.Info, $"Connecting to {localSettings.DbConnectionSettings.DBMS} Database {localSettings.DbConnectionSettings.Host}:{localSettings.DbConnectionSettings.Port}...");
-            using (var dbConnection = new DbConnection(localSettings.DbConnectionSettings))
-            {
+            using (var dbConnection = new DbConnection(localSettings.DbConnectionSettings)) {
                 try {
                     dbConnection.Open();
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     _log.Log(LogLevel.Fatal, $"Fatel Error: {ex.Message}");
                     return;
                 }
@@ -54,6 +51,7 @@ namespace Firefly.Server.Worker
             }
             
             /* TODO
+             * TODO - Fix coding styles & stick to it. (Classes { on newline. everything else on same line)
              * Connect to Database. Test can run some querys. Ensure Encryption is on.
              * --> DBconnection object to be passed into Repos via DI.
              * Upgrade to latest version if needed (Creating tables, alter statements, etc). Is there a library I can use to do this? (EF Migrations? Might be far too verbose)
@@ -67,32 +65,24 @@ namespace Firefly.Server.Worker
 
         }
 
-        private bool _importValidateAndApplyLocalSettings(out LocalSettings localSettings, string iniFile, string dbEnvironment)
-        {
-            try
-            {
+        private bool _importValidateAndApplyLocalSettings(out LocalSettings localSettings, string iniFile, string dbEnvironment) {
+            try {
                 localSettings = new LocalSettingsFactory(iniFile, dbEnvironment).Build();
 
                 var messages = new List<String>();
-                if (!localSettings.Validate(ref messages))
-                {
+                if (!localSettings.Validate(ref messages)) {
                     var exMsg = string.Join("; ", messages);
                     throw new Exception(exMsg);
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Console.WriteLine($"ERROR: Unable to read from {iniFile}. {ex.ToString()}.");
                 localSettings = null;
                 return false;
             }
 
-            try
-            {
+            try {
                 LogSettings.ApplySettingsToNLog(localSettings.LogSettings);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 Console.WriteLine($"ERROR: Error applying config to NLog. {ex.ToString()}.");
                 localSettings = null;
                 return false;

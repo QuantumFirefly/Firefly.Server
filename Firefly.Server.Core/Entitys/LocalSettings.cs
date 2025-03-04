@@ -9,16 +9,15 @@ namespace Firefly.Server.Core.Entitys
 {
     public class LocalSettings : ISettings
     {
-        public LocalSettings()
-        {
+        public LocalSettings() {
             DbConnectionSettings = new DbConnectionSettings();
             LogSettings = new LogSettings();
         }
+
         public DbConnectionSettings DbConnectionSettings { get; set; }
         public LogSettings LogSettings { get; set; }
 
-        public bool Validate(ref List<string> messages)
-        {
+        public bool Validate(ref List<string> messages) {
             bool validationPassed = true;
 
             if (!DbConnectionSettings.Validate(ref messages)) validationPassed = false;

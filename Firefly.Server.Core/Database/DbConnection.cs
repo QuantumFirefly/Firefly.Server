@@ -3,7 +3,8 @@ using Npgsql;
 
 namespace Firefly.Server.Core.Database
 {
-    public class DbConnection : IDisposable {
+    public class DbConnection : IDisposable
+    {
 
         private NpgsqlConnection _connection;
         public DbConnection(DbConnectionSettings connectionSettings) {

@@ -11,16 +11,14 @@ namespace Firefly.Server.Core
 
         private string _environmentType;
         private IConfigurationRoot _dbSettings;
-        public LocalSettingsFactory(string IniFileName, string EnvironmentType = "Production")
-        {
+        public LocalSettingsFactory(string IniFileName, string EnvironmentType = "Production") {
             _dbSettings = new ConfigurationBuilder()
             .AddIniFile(IniFileName, optional: false, reloadOnChange: true)
             .Build();
             _environmentType = EnvironmentType;
         }
 
-        public LocalSettings Build()
-        {
+        public LocalSettings Build() {
             var data = new LocalSettings();
 
             data.DbConnectionSettings.DBMS = Enum.Parse<EnumDataBaseMS>((_dbSettings[$"Database-{_environmentType}:DBMS"] ?? "Null"));

@@ -26,8 +26,7 @@ namespace Firefly.Server.Core.Entitys;
     public int maxArchiveFiles { get; set; }
 
     private long _archiveAboveSize;
-    public long archiveAboveSize
-    {
+    public long archiveAboveSize {
         get => _archiveAboveSize;
         set
         {
@@ -40,40 +39,33 @@ namespace Firefly.Server.Core.Entitys;
 
     private string[] _targets => target.Split(",");
 
-    public bool Validate(ref List<string> messages)
-    {
+    public bool Validate(ref List<string> messages) {
         bool validationPassed = true;
 
-        foreach (var target in _targets)
-        {
+        foreach (var target in _targets) {
             if ((target != "file" && target != "console")
-                || target.Length == 0)
-            {
+                || target.Length == 0) {
                 messages.Add($"Target of {target} is not an acceptable logging target. Acceptable logging targets are file or console.");
                 validationPassed = false;
             }
         }
 
-        if (filePath.Length <= 1)
-        {
+        if (filePath.Length <= 1) {
             messages.Add($"Log file path should be longer than 1 character.");
             validationPassed = false;
         }
 
-        if (archivePath.Length <= 1)
-        {
+        if (archivePath.Length <= 1) {
             messages.Add($"Log archive file path should be longer than 1 character.");
             validationPassed = false;
         }
 
-        if (maxArchiveFiles < 1)
-        {
+        if (maxArchiveFiles < 1) {
             messages.Add($"Maximum archive files should be 1 or more.");
             validationPassed = false;
         }
 
-        if (archiveAboveSize < Constants.MB_TO_BYTES * 10)
-        {
+        if (archiveAboveSize < Constants.MB_TO_BYTES * 10) {
             messages.Add($"Archive above size should be 10MB or more.");
             validationPassed = false;
         }
@@ -83,13 +75,11 @@ namespace Firefly.Server.Core.Entitys;
         return validationPassed;
     }
 
-    public static void ApplySettingsToNLog(LogSettings settingsToApply)
-    {
+    public static void ApplySettingsToNLog(LogSettings settingsToApply) {
         var loggingConfig = LogManager.Configuration;
 
         // Set the LogLevel
-        foreach (var rule in loggingConfig.LoggingRules)
-        {
+        foreach (var rule in loggingConfig.LoggingRules) {
             rule.SetLoggingLevels(settingsToApply.logLevel, LogLevel.Fatal);
 
             rule.Targets.Clear(); // Remove existing rules.
@@ -98,8 +88,7 @@ namespace Firefly.Server.Core.Entitys;
 
         // Override nlog.config with data from provided instance of LogSettings
         var fileTarget = loggingConfig.FindTargetByName<FileTarget>("file");
-        if (fileTarget != null)
-        {
+        if (fileTarget != null) {
             fileTarget.FileName = settingsToApply.filePath;
             fileTarget.ArchiveFileName = settingsToApply.archivePath;
 
