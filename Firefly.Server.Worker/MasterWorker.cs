@@ -43,15 +43,16 @@ namespace Firefly.Server.Worker
                 try {
                     dbConnection.Open();
                 } catch (Exception ex) {
-                    _log.Log(LogLevel.Fatal, $"Fatel Error: {ex.Message}");
+                    _log.Log(LogLevel.Fatal, $"{ex.Message}");
                     return;
                 }
                 
                 _log.Log(LogLevel.Debug, $"Database Connected!");
             }
             
+            // TODO - Provide tool that takes db info from Local Settings. Takes super user password, and creates DB & user/pass
+            
             /* TODO
-             * TODO - Fix coding styles & stick to it. (Classes { on newline. everything else on same line)
              * Connect to Database. Test can run some querys. Ensure Encryption is on.
              * --> DBconnection object to be passed into Repos via DI.
              * Upgrade to latest version if needed (Creating tables, alter statements, etc). Is there a library I can use to do this? (EF Migrations? Might be far too verbose)
