@@ -3,8 +3,8 @@ using Npgsql;
 
 namespace Firefly.Server.Core.Database
 {
-    public class DbConnection
-    {
+    public class DbConnection : IDisposable {
+
         private NpgsqlConnection _connection;
         public DbConnection(DbConnectionSettings connectionSettings) {
             if (connectionSettings.DBMS != Enums.EnumDataBaseMS.PostgreSQL)
@@ -14,10 +14,18 @@ namespace Firefly.Server.Core.Database
             _connection = new NpgsqlConnection(connectionSettings.ToConnectionString);
         }
 
+        public void Open() {
+            _connection.Open();
+        }
+
         // TODO - Create mapping functions for Scaler, Query & Non-Query. (Non-query can take in array of tuples for paramters)
 
+        public void Dispose() {
+            _connection.Close();
+            _connection?.Dispose();
+        }
         ~DbConnection() {
-            _connection.Dispose();
+            Dispose(); // Just incase Dispose() is not called!
         }
     }
 }

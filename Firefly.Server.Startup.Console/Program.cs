@@ -14,6 +14,9 @@ namespace Firefly.Server.ConsoleStartup
             Console.WriteLine($"Starting Firefly Server in Console Mode...");
 
             Startup.Run();
+
+            Console.WriteLine("Press any key to close...");
+            Console.ReadKey();
         }
     }
 }
