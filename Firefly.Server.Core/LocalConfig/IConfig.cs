@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Firefly.Server.Core.Interfaces
+namespace Firefly.Server.Core.LocalConfig
 {
-    public interface ISettings
+    public interface IConfig
     {
         bool Validate(ref List<string> messages);
     }

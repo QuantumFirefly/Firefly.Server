@@ -1,4 +1,4 @@
-﻿using Firefly.Server.Core.Entitys;
+﻿using Firefly.Server.Core.LocalConfig;
 using Npgsql;
 
 namespace Firefly.Server.Core.Database
@@ -7,7 +7,7 @@ namespace Firefly.Server.Core.Database
     {
 
         private NpgsqlConnection _connection;
-        public DbConnection(DbConnectionSettings connectionSettings) {
+        public DbConnection(DbConnectionConfig connectionSettings) {
             if (connectionSettings.DBMS != Enums.EnumDataBaseMS.PostgreSQL)
             {
                 throw new ArgumentException("Only PostgreSQL is supported as an DBMS.");

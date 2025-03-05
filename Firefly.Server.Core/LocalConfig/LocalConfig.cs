@@ -1,17 +1,16 @@
-﻿using Firefly.Server.Core.Interfaces;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Firefly.Server.Core.Entitys
+namespace Firefly.Server.Core.LocalConfig
 {
-    public class LocalSettings : ISettings
+    public class LocalConfig : IConfig
     {
-        public DbConnectionSettings DbConnectionSettings { get; set; } = new DbConnectionSettings();
-        public LogSettings LogSettings { get; set; } = new LogSettings();
+        public DbConnectionConfig DbConnectionSettings { get; set; } = new DbConnectionConfig();
+        public LogConfig LogSettings { get; set; } = new LogConfig();
 
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;
@@ -22,14 +21,14 @@ namespace Firefly.Server.Core.Entitys
             return validationPassed;
         }
 
-        public static LocalSettings Build(string iniFileName, string dbEnvironmentType) {
+        public static LocalConfig Build(string iniFileName, string dbEnvironmentType) {
             IConfigurationRoot iniContent = new ConfigurationBuilder()
             .AddIniFile(iniFileName, optional: false, reloadOnChange: true)
             .Build();
 
-            var data = new LocalSettings();
-            data.DbConnectionSettings = DbConnectionSettings.Build(iniContent, dbEnvironmentType);
-            data.LogSettings = LogSettings.Build(iniContent);
+            var data = new LocalConfig();
+            data.DbConnectionSettings = DbConnectionConfig.Build(iniContent, dbEnvironmentType);
+            data.LogSettings = LogConfig.Build(iniContent);
             return data;
         }
 

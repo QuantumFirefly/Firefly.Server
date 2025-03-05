@@ -1,19 +1,18 @@
 ﻿using Firefly.Server.Core.Enums;
-using Firefly.Server.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Targets;
 
-namespace Firefly.Server.Core.Entitys;
-    public class LogSettings : ISettings
-    {
+namespace Firefly.Server.Core.LocalConfig;
+public class LogConfig : IConfig
+{
 
     public LogLevel logLevel { get; set; } = LogLevel.Off;
     public string target { get; set; } = "";
     public string filePath { get; set; }
 
     private string _archivePath;
-    public string archivePath { 
+    public string archivePath {
         get => _archivePath;
         set {
             // LocalSettings.ini takes % instead of # because hashes are considered comments in ini files.
@@ -30,8 +29,7 @@ namespace Firefly.Server.Core.Entitys;
     private long _archiveAboveSize;
     public long archiveAboveSize {
         get => _archiveAboveSize;
-        set
-        {
+        set {
             // archiveAboveSize is taken from the ini files in MB. Convert to Bytes for NLog
             _archiveAboveSize = value * Constants.MB_TO_BYTES;
         }
@@ -45,7 +43,7 @@ namespace Firefly.Server.Core.Entitys;
         bool validationPassed = true;
 
         foreach (var target in _targets) {
-            if ((target != "file" && target != "console")
+            if (target != "file" && target != "console"
                 || target.Length == 0) {
                 messages.Add($"Target of {target} is not an acceptable logging target. Acceptable logging targets are file or console.");
                 validationPassed = false;
@@ -72,13 +70,13 @@ namespace Firefly.Server.Core.Entitys;
             validationPassed = false;
         }
 
-        
+
 
         return validationPassed;
     }
 
-    public static LogSettings Build(IConfigurationRoot iniContent) {
-        var data = new LogSettings();
+    public static LogConfig Build(IConfigurationRoot iniContent) {
+        var data = new LogConfig();
 
         data.logLevel = LogLevel.FromString(iniContent[$"Logging:LogLevel"] ?? "Off");
         data.target = iniContent[$"Logging:Target"] ?? "";
@@ -93,7 +91,7 @@ namespace Firefly.Server.Core.Entitys;
         return data;
     }
 
-    public static void ApplySettingsToNLog(LogSettings settingsToApply) {
+    public static void ApplySettingsToNLog(LogConfig settingsToApply) {
         var loggingConfig = LogManager.Configuration;
 
         // Set the LogLevel

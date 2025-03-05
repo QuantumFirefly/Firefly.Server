@@ -1,6 +1,6 @@
 ﻿using Firefly.Server.Core;
 using Firefly.Server.Core.Database;
-using Firefly.Server.Core.Entitys;
+using Firefly.Server.Core.LocalConfig;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -31,7 +31,7 @@ namespace Firefly.Server.Worker
 
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
-            LocalSettings localSettings;
+            LocalConfig localSettings;
             if (!_importValidateAndApplyLocalSettings(out localSettings, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                 return;
             }
@@ -66,9 +66,9 @@ namespace Firefly.Server.Worker
 
         }
 
-        private bool _importValidateAndApplyLocalSettings(out LocalSettings localSettings, string iniFile, string dbEnvironmentType) {
+        private bool _importValidateAndApplyLocalSettings(out LocalConfig localSettings, string iniFile, string dbEnvironmentType) {
             try {
-                localSettings = LocalSettings.Build(iniFile, dbEnvironmentType);
+                localSettings = LocalConfig.Build(iniFile, dbEnvironmentType);
 
                 var messages = new List<String>();
                 if (!localSettings.Validate(ref messages)) {
@@ -82,7 +82,7 @@ namespace Firefly.Server.Worker
             }
 
             try {
-                LogSettings.ApplySettingsToNLog(localSettings.LogSettings);
+                LogConfig.ApplySettingsToNLog(localSettings.LogSettings);
             } catch (Exception ex) {
                 Console.WriteLine($"ERROR: Error applying config to NLog. {ex.ToString()}.");
                 localSettings = null;
