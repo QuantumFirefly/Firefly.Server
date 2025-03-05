@@ -14,13 +14,10 @@ namespace Firefly.Server.Worker
 {
 
 
-    internal class MasterWorker
+    internal class MasterWorker(ILogger? logService = null)
     {
 
-        private readonly ILogger _log;
-        public MasterWorker(ILogger? logService = null) {
-            _log = logService ?? LogManager.GetCurrentClassLogger();
-        }
+        private readonly ILogger _log = logService ?? LogManager.GetCurrentClassLogger();
 
         public void Start() {
             var version = Assembly.GetExecutingAssembly()
@@ -31,23 +28,22 @@ namespace Firefly.Server.Worker
 
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
-            if (!_ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
+            if (!ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                 return;
             }
 
             _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
 
             _log.Log(LogLevel.Info, $"Connecting to {localConfig.DbConnectionSettings.DBMS} Database {localConfig.DbConnectionSettings.Host}:{localConfig.DbConnectionSettings.Port}...");
-            using (var dbConnection = new DbConnection(localConfig.DbConnectionSettings)) {
-                try {
-                    dbConnection.Open();
-                } catch (Exception ex) {
-                    _log.Log(LogLevel.Fatal, $"{ex.Message}");
-                    return;
-                }
-                
-                _log.Log(LogLevel.Debug, $"Database Connected!");
+            using var dbConnection = new DbConnection(localConfig.DbConnectionSettings);
+            try {
+                dbConnection.Open();
+            } catch (Exception ex) {
+                _log.Log(LogLevel.Fatal, $"{ex.Message}");
+                return;
             }
+                
+            _log.Log(LogLevel.Debug, $"Database Connected!");
             
             // TODO - Provide tool that takes db info from Local Settings. Takes super user password, and creates DB & user/pass
             
@@ -65,7 +61,7 @@ namespace Firefly.Server.Worker
 
         }
 
-        private static bool _ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, string iniFile, string dbEnvironmentType) {
+        private static bool ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, string iniFile, string dbEnvironmentType) {
             try {
                 localConfig = LocalConfig.Build(iniFile, dbEnvironmentType);
 

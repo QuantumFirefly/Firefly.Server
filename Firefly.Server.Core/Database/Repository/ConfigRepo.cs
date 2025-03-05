@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Database.Repository
 {
-    internal class ConfigRepo
+    internal class ConfigRepo(DbConnection db)
     {
-        private DbConnection _db;
-        public ConfigRepo(DbConnection db) {
-            _db = db;
-        }
+        private readonly DbConnection _db;
 
 
         // TODO - GetAll(), Get(), SetAll(), Set()

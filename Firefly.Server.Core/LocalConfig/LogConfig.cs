@@ -8,7 +8,7 @@ public class LogConfig : IConfig
 {
 
     public LogLevel LogLevel { get; set; } = LogLevel.Off;
-    private string[] _Targets => Target.Split(",");
+    private string[] Targets => Target.Split(",");
     public string Target { get; set; } = "";
     public string FilePath { get; set; } = "";
 
@@ -41,7 +41,7 @@ public class LogConfig : IConfig
     public bool Validate(ref List<string> messages) {
         bool validationPassed = true;
 
-        foreach (var target in _Targets) {
+        foreach (var target in Targets) {
             if (target != "file" && target != "console"
                 || target.Length == 0) {
                 messages.Add($"Target of {target} is not an acceptable logging target. Acceptable logging targets are file or console.");
@@ -100,7 +100,7 @@ public class LogConfig : IConfig
             rule.SetLoggingLevels(settingsToApply.LogLevel, LogLevel.Fatal);
 
             rule.Targets.Clear(); // Remove existing rules.
-            Array.ForEach(settingsToApply._Targets, target => rule.Targets.Add(loggingConfig.FindTargetByName(target)));
+            Array.ForEach(settingsToApply.Targets, target => rule.Targets.Add(loggingConfig.FindTargetByName(target)));
         }
 
         // Override nlog.config with data from provided instance of LogSettings

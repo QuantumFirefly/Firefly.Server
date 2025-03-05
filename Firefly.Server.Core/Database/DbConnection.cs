@@ -6,7 +6,7 @@ namespace Firefly.Server.Core.Database
     public class DbConnection : IDisposable
     {
 
-        private NpgsqlConnection _connection;
+        private readonly NpgsqlConnection _connection;
         public DbConnection(DbConnectionConfig connectionSettings) {
             if (connectionSettings.DBMS != Enums.EnumDataBaseMS.PostgreSQL)
             {
@@ -22,6 +22,7 @@ namespace Firefly.Server.Core.Database
         // TODO - Create mapping functions for Scaler, Query & Non-Query. (Non-query can take in array of tuples for paramters)
 
         public void Dispose() {
+            GC.SuppressFinalize(this);
             _connection.Close();
             _connection?.Dispose();
         }
