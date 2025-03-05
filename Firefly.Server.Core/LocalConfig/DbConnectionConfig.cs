@@ -8,15 +8,15 @@ namespace Firefly.Server.Core.LocalConfig
 
         public EnumDataBaseMS DBMS { get; set; }
 
-        public string Host { get; set; }
+        public string Host { get; set; } = "";
 
-        public int Port { get; set; }
+        public int Port { get; set; } = 0;
 
-        public string DatabaseName { get; set; }
+        public string DatabaseName { get; set; } = "";
 
-        public string Username { get; set; }
+        public string Username { get; set; } = "";
 
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
 
         public string ToConnectionString => $"Host={Host};Port={Port};Database={DatabaseName};Username={Username};Password={Password};";
 

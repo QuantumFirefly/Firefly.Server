@@ -8,9 +8,7 @@ namespace Firefly.Server.Core.Entitys
 {
     public class Config
     {
-        public bool isIRCEnabled {  get; set; }
-        public int IRCServerPort { get; set; }
-        public string serverDomain { get; set; }
+
 
         /*
          * TODO - Proposed config structure in DB.

@@ -9,9 +9,9 @@ public class LogConfig : IConfig
 
     public LogLevel logLevel { get; set; } = LogLevel.Off;
     public string target { get; set; } = "";
-    public string filePath { get; set; }
+    public string filePath { get; set; } = "";
 
-    private string _archivePath;
+    private string _archivePath = "";
     public string archivePath {
         get => _archivePath;
         set {
@@ -35,7 +35,7 @@ public class LogConfig : IConfig
         }
     }
 
-    public string archiveDateFormat { get; set; }
+    public string archiveDateFormat { get; set; } = "";
 
     private string[] _targets => target.Split(",");
 
