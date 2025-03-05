@@ -31,15 +31,14 @@ namespace Firefly.Server.Worker
 
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
-            LocalConfig localSettings;
-            if (!_importValidateAndApplyLocalSettings(out localSettings, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
+            if (!_ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                 return;
             }
 
             _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
 
-            _log.Log(LogLevel.Info, $"Connecting to {localSettings.DbConnectionSettings.DBMS} Database {localSettings.DbConnectionSettings.Host}:{localSettings.DbConnectionSettings.Port}...");
-            using (var dbConnection = new DbConnection(localSettings.DbConnectionSettings)) {
+            _log.Log(LogLevel.Info, $"Connecting to {localConfig.DbConnectionSettings.DBMS} Database {localConfig.DbConnectionSettings.Host}:{localConfig.DbConnectionSettings.Port}...");
+            using (var dbConnection = new DbConnection(localConfig.DbConnectionSettings)) {
                 try {
                     dbConnection.Open();
                 } catch (Exception ex) {
@@ -66,7 +65,7 @@ namespace Firefly.Server.Worker
 
         }
 
-        private bool _importValidateAndApplyLocalSettings(out LocalConfig localConfig, string iniFile, string dbEnvironmentType) {
+        private static bool _ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, string iniFile, string dbEnvironmentType) {
             try {
                 localConfig = LocalConfig.Build(iniFile, dbEnvironmentType);
 
@@ -76,7 +75,7 @@ namespace Firefly.Server.Worker
                     throw new Exception(exMsg);
                 }
             } catch (Exception ex) {
-                Console.WriteLine($"ERROR: Unable to read from {iniFile}. {ex.ToString()}.");
+                Console.WriteLine($"ERROR: Unable to read from {iniFile}. {ex}.");
                 localConfig = new LocalConfig();
                 return false;
             }
@@ -84,7 +83,7 @@ namespace Firefly.Server.Worker
             try {
                 LogConfig.ApplySettingsToNLog(localConfig.LogSettings);
             } catch (Exception ex) {
-                Console.WriteLine($"ERROR: Error applying config to NLog. {ex.ToString()}.");
+                Console.WriteLine($"ERROR: Error applying config to NLog. {ex}.");
                 localConfig = new LocalConfig();
                 return false;
             }
