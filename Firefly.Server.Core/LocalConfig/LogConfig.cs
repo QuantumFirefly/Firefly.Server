@@ -25,7 +25,7 @@ public class LogConfig : IConfig
 
     public ArchiveNumberingMode ArchiveNumbering { get; set; }
 
-    public int AaxArchiveFiles { get; set; }
+    public int MaxArchiveFiles { get; set; }
 
     private long _archiveAboveSize;
     public long ArchiveAboveSize {
@@ -59,7 +59,7 @@ public class LogConfig : IConfig
             validationPassed = false;
         }
 
-        if (AaxArchiveFiles < 1) {
+        if (MaxArchiveFiles < 1) {
             messages.Add($"Maximum archive files should be 1 or more.");
             validationPassed = false;
         }
@@ -82,7 +82,7 @@ public class LogConfig : IConfig
             ArchiveEvery = Enum.Parse<FileArchivePeriod>(iniContent[$"Logging:ArchiveEvery"] ?? "None"),
             ArchiveNumbering = Enum.Parse<ArchiveNumberingMode>(iniContent[$"Logging:ArchiveNumbering"] ?? ""),
             ArchivePath = iniContent[$"Logging:ArchivePath"] ?? "",
-            AaxArchiveFiles = int.Parse(iniContent[$"Logging:MaxArchiveFiles"] ?? "-1"),
+            MaxArchiveFiles = int.Parse(iniContent[$"Logging:MaxArchiveFiles"] ?? "-1"),
             ArchiveAboveSize = long.Parse(iniContent[$"Logging:ArchiveAboveSize"] ?? "-1"),
             ArchiveDateFormat = iniContent[$"Logging:ArchiveDateFormat"] ?? ""
         };
@@ -110,7 +110,7 @@ public class LogConfig : IConfig
             fileTarget.ArchiveFileName = settingsToApply.ArchivePath;
 
             fileTarget.ArchiveEvery = settingsToApply.ArchiveEvery;
-            fileTarget.MaxArchiveFiles = settingsToApply.AaxArchiveFiles;
+            fileTarget.MaxArchiveFiles = settingsToApply.MaxArchiveFiles;
             fileTarget.ArchiveNumbering = settingsToApply.ArchiveNumbering;
             fileTarget.ArchiveAboveSize = settingsToApply.ArchiveAboveSize;
             fileTarget.ArchiveDateFormat = settingsToApply.ArchiveDateFormat;
