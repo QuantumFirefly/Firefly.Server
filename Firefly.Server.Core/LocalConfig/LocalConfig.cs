@@ -26,9 +26,10 @@ namespace Firefly.Server.Core.LocalConfig
             .AddIniFile(iniFileName, optional: false, reloadOnChange: true)
             .Build();
 
-            var data = new LocalConfig();
-            data.DbConnectionSettings = DbConnectionConfig.Build(iniContent, dbEnvironmentType);
-            data.LogSettings = LogConfig.Build(iniContent);
+            var data = new LocalConfig {
+                DbConnectionSettings = DbConnectionConfig.Build(iniContent, dbEnvironmentType),
+                LogSettings = LogConfig.Build(iniContent)
+            };
             return data;
         }
 

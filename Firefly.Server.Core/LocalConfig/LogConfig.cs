@@ -7,12 +7,13 @@ namespace Firefly.Server.Core.LocalConfig;
 public class LogConfig : IConfig
 {
 
-    public LogLevel logLevel { get; set; } = LogLevel.Off;
-    public string target { get; set; } = "";
-    public string filePath { get; set; } = "";
+    public LogLevel LogLevel { get; set; } = LogLevel.Off;
+    private string[] _targets => Target.Split(",");
+    public string Target { get; set; } = "";
+    public string FilePath { get; set; } = "";
 
     private string _archivePath = "";
-    public string archivePath {
+    public string ArchivePath {
         get => _archivePath;
         set {
             // LocalSettings.ini takes % instead of # because hashes are considered comments in ini files.
@@ -20,14 +21,14 @@ public class LogConfig : IConfig
         }
     }
 
-    public FileArchivePeriod archiveEvery { get; set; }
+    public FileArchivePeriod ArchiveEvery { get; set; }
 
-    public ArchiveNumberingMode archiveNumbering { get; set; }
+    public ArchiveNumberingMode ArchiveNumbering { get; set; }
 
-    public int maxArchiveFiles { get; set; }
+    public int AaxArchiveFiles { get; set; }
 
     private long _archiveAboveSize;
-    public long archiveAboveSize {
+    public long ArchiveAboveSize {
         get => _archiveAboveSize;
         set {
             // archiveAboveSize is taken from the ini files in MB. Convert to Bytes for NLog
@@ -35,9 +36,7 @@ public class LogConfig : IConfig
         }
     }
 
-    public string archiveDateFormat { get; set; } = "";
-
-    private string[] _targets => target.Split(",");
+    public string ArchiveDateFormat { get; set; } = "";
 
     public bool Validate(ref List<string> messages) {
         bool validationPassed = true;
@@ -50,22 +49,22 @@ public class LogConfig : IConfig
             }
         }
 
-        if (filePath.Length <= 1) {
+        if (FilePath.Length <= 1) {
             messages.Add($"Log file path should be longer than 1 character.");
             validationPassed = false;
         }
 
-        if (archivePath.Length <= 1) {
+        if (ArchivePath.Length <= 1) {
             messages.Add($"Log archive file path should be longer than 1 character.");
             validationPassed = false;
         }
 
-        if (maxArchiveFiles < 1) {
+        if (AaxArchiveFiles < 1) {
             messages.Add($"Maximum archive files should be 1 or more.");
             validationPassed = false;
         }
 
-        if (archiveAboveSize < Constants.MB_TO_BYTES * 10) {
+        if (ArchiveAboveSize < Constants.MB_TO_BYTES * 10) {
             messages.Add($"Archive above size should be 10MB or more.");
             validationPassed = false;
         }
@@ -76,17 +75,19 @@ public class LogConfig : IConfig
     }
 
     public static LogConfig Build(IConfigurationRoot iniContent) {
-        var data = new LogConfig();
+        var data = new LogConfig {
+            LogLevel = LogLevel.FromString(iniContent[$"Logging:LogLevel"] ?? "Off"),
+            Target = iniContent[$"Logging:Target"] ?? "",
+            FilePath = iniContent[$"Logging:FilePath"] ?? "",
+            ArchiveEvery = Enum.Parse<FileArchivePeriod>(iniContent[$"Logging:ArchiveEvery"] ?? "None"),
+            ArchiveNumbering = Enum.Parse<ArchiveNumberingMode>(iniContent[$"Logging:ArchiveNumbering"] ?? ""),
+            ArchivePath = iniContent[$"Logging:ArchivePath"] ?? "",
+            AaxArchiveFiles = int.Parse(iniContent[$"Logging:MaxArchiveFiles"] ?? "-1"),
+            ArchiveAboveSize = long.Parse(iniContent[$"Logging:ArchiveAboveSize"] ?? "-1"),
+            ArchiveDateFormat = iniContent[$"Logging:ArchiveDateFormat"] ?? ""
+        };
 
-        data.logLevel = LogLevel.FromString(iniContent[$"Logging:LogLevel"] ?? "Off");
-        data.target = iniContent[$"Logging:Target"] ?? "";
-        data.filePath = iniContent[$"Logging:FilePath"] ?? "";
-        data.archiveEvery = Enum.Parse<FileArchivePeriod>(iniContent[$"Logging:ArchiveEvery"] ?? "None");
-        data.archiveNumbering = Enum.Parse<ArchiveNumberingMode>(iniContent[$"Logging:ArchiveNumbering"] ?? "");
-        data.archivePath = iniContent[$"Logging:ArchivePath"] ?? "";
-        data.maxArchiveFiles = int.Parse(iniContent[$"Logging:MaxArchiveFiles"] ?? "-1");
-        data.archiveAboveSize = long.Parse(iniContent[$"Logging:ArchiveAboveSize"] ?? "-1");
-        data.archiveDateFormat = iniContent[$"Logging:ArchiveDateFormat"] ?? "";
+        
 
         return data;
     }
@@ -96,7 +97,7 @@ public class LogConfig : IConfig
 
         // Set the LogLevel
         foreach (var rule in loggingConfig.LoggingRules) {
-            rule.SetLoggingLevels(settingsToApply.logLevel, LogLevel.Fatal);
+            rule.SetLoggingLevels(settingsToApply.LogLevel, LogLevel.Fatal);
 
             rule.Targets.Clear(); // Remove existing rules.
             Array.ForEach(settingsToApply._targets, target => rule.Targets.Add(loggingConfig.FindTargetByName(target)));
@@ -105,14 +106,14 @@ public class LogConfig : IConfig
         // Override nlog.config with data from provided instance of LogSettings
         var fileTarget = loggingConfig.FindTargetByName<FileTarget>("file");
         if (fileTarget != null) {
-            fileTarget.FileName = settingsToApply.filePath;
-            fileTarget.ArchiveFileName = settingsToApply.archivePath;
+            fileTarget.FileName = settingsToApply.FilePath;
+            fileTarget.ArchiveFileName = settingsToApply.ArchivePath;
 
-            fileTarget.ArchiveEvery = settingsToApply.archiveEvery;
-            fileTarget.MaxArchiveFiles = settingsToApply.maxArchiveFiles;
-            fileTarget.ArchiveNumbering = settingsToApply.archiveNumbering;
-            fileTarget.ArchiveAboveSize = settingsToApply.archiveAboveSize;
-            fileTarget.ArchiveDateFormat = settingsToApply.archiveDateFormat;
+            fileTarget.ArchiveEvery = settingsToApply.ArchiveEvery;
+            fileTarget.MaxArchiveFiles = settingsToApply.AaxArchiveFiles;
+            fileTarget.ArchiveNumbering = settingsToApply.ArchiveNumbering;
+            fileTarget.ArchiveAboveSize = settingsToApply.ArchiveAboveSize;
+            fileTarget.ArchiveDateFormat = settingsToApply.ArchiveDateFormat;
 
         }
 

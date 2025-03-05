@@ -57,15 +57,14 @@ namespace Firefly.Server.Core.LocalConfig
         }
 
         public static DbConnectionConfig Build(IConfigurationRoot iniContent, string dbEnvironmentType) {
-            var data = new DbConnectionConfig();
-
-            data.DBMS = Enum.Parse<EnumDataBaseMS>(iniContent[$"Database-{dbEnvironmentType}:DBMS"] ?? "Null");
-            data.Host = iniContent[$"Database-{dbEnvironmentType}:Host"] ?? "";
-            data.Port = int.Parse(iniContent[$"Database-{dbEnvironmentType}:Port"] ?? "-1");
-            data.DatabaseName = iniContent[$"Database-{dbEnvironmentType}:DatabaseName"] ?? "";
-            data.Username = iniContent[$"Database-{dbEnvironmentType}:Username"] ?? "";
-            data.Password = iniContent[$"Database-{dbEnvironmentType}:Password"] ?? "";
-
+            var data = new DbConnectionConfig{
+                DBMS = Enum.Parse<EnumDataBaseMS>(iniContent[$"Database-{dbEnvironmentType}:DBMS"] ?? "Null"),
+                Host = iniContent[$"Database-{dbEnvironmentType}:Host"] ?? "",
+                Port = int.Parse(iniContent[$"Database-{dbEnvironmentType}:Port"] ?? "-1"),
+                DatabaseName = iniContent[$"Database-{dbEnvironmentType}:DatabaseName"] ?? "",
+                Username = iniContent[$"Database-{dbEnvironmentType}:Username"] ?? "",
+                Password = iniContent[$"Database-{dbEnvironmentType}:Password"] ?? ""
+            };
             return data;
         }
     }

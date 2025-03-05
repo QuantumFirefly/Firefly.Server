@@ -17,12 +17,12 @@ namespace Firefly.Server.Worker
     internal class MasterWorker
     {
 
-        ILogger _log;
+        private readonly ILogger _log;
         public MasterWorker(ILogger? logService = null) {
             _log = logService ?? LogManager.GetCurrentClassLogger();
         }
 
-        public async Task Start() {
+        public void Start() {
             var version = Assembly.GetExecutingAssembly()
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
                 .InformationalVersion;
@@ -31,14 +31,14 @@ namespace Firefly.Server.Worker
 
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
-            LocalConfig localSettings;
+            LocalConfig? localSettings;
             if (!_importValidateAndApplyLocalSettings(out localSettings, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                 return;
             }
 
             _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
 
-            _log.Log(LogLevel.Info, $"Connecting to {localSettings.DbConnectionSettings.DBMS} Database {localSettings.DbConnectionSettings.Host}:{localSettings.DbConnectionSettings.Port}...");
+            _log.Log(LogLevel.Info, $"Connecting to {localSettings?.DbConnectionSettings.DBMS} Database {localSettings?.DbConnectionSettings.Host}:{localSettings?.DbConnectionSettings.Port}...");
             using (var dbConnection = new DbConnection(localSettings.DbConnectionSettings)) {
                 try {
                     dbConnection.Open();
@@ -66,7 +66,7 @@ namespace Firefly.Server.Worker
 
         }
 
-        private bool _importValidateAndApplyLocalSettings(out LocalConfig localSettings, string iniFile, string dbEnvironmentType) {
+        private bool _importValidateAndApplyLocalSettings(out LocalConfig? localSettings, string iniFile, string dbEnvironmentType) {
             try {
                 localSettings = LocalConfig.Build(iniFile, dbEnvironmentType);
 
