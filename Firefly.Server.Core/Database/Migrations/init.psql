@@ -1,0 +1,24 @@
+CREATE EXTENSION IF NOT EXISTS citext;
+
+CREATE TABLE Config (
+    ID SERIAL PRIMARY KEY,
+    UpperKey CITEXT NOT NULL UNIQUE,
+    JsonData JSONB NOT NULL
+);
+
+CREATE INDEX idx_config_upperkey ON Config (UpperKey);
+CREATE INDEX idx_config_jsondata ON Config USING GIN (JsonData);
+
+
+INSERT INTO Config (UpperKey, JsonData)
+VALUES 
+    ('General', jsonb_build_object(
+        'ServerDomain', 'firefly.example.com', 
+        'ServerName', 'Default Firefly'
+       )),
+    ('IRC', jsonb_build_object(
+    'Enabled', True,
+    'Port', 6667
+    ));
+
+
