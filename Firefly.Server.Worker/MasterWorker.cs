@@ -53,7 +53,8 @@ namespace Firefly.Server.Worker
              * Upgrade to latest version if needed (Creating tables, alter statements, etc). Is there a library I can use to do this? (EF Migrations? Might be far too verbose)
              * Import RemoteSettings from database table. Setup repo & queries class for this. (need an appropiate name, FireFlySettings? Probably better to have a parent calss also that has both local & remote settings)
              * Create IRC Settings - and class hierachy for it.
-             * Start to listen in on IRC port for inbound TCP connections. Start new worker thread for each connection.
+             * Start to listen in on IRC port for inbound TCP connections.
+             * Classes need abstracting to Interfaces for DI & Unit Testing.
              * 
              * Integration & Unit Tests
              */

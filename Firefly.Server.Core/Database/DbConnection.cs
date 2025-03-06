@@ -23,6 +23,7 @@ namespace Firefly.Server.Core.Database
         }
 
         // TODO - Create mapping functions for Scaler, Query & Non-Query. (Non-query can take in array of tuples for paramters)
+        // TODO - Querys should hit database async
 
         public void Dispose() {
             GC.SuppressFinalize(this);
