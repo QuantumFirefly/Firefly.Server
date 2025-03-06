@@ -6,7 +6,7 @@ namespace Firefly.Server.Core.LocalConfig
     public class DbConnectionConfig : IConfig
     {
 
-        public EnumDataBaseMS DBMS { get; set; }
+        public EnumDBMS DBMS { get; set; }
 
         public string Host { get; set; } = "";
 
@@ -23,7 +23,7 @@ namespace Firefly.Server.Core.LocalConfig
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;
 
-            if (DBMS != EnumDataBaseMS.PostgreSQL) {
+            if (DBMS != EnumDBMS.PostgreSQL) {
                 messages.Add("Only PostgreSQL is supported as a valid DBMS.");
                 validationPassed = false;
             }
@@ -58,7 +58,7 @@ namespace Firefly.Server.Core.LocalConfig
 
         public static DbConnectionConfig Build(IConfigurationRoot iniContent, string dbEnvironmentType) {
             var data = new DbConnectionConfig{
-                DBMS = Enum.Parse<EnumDataBaseMS>(iniContent[$"Database-{dbEnvironmentType}:DBMS"] ?? "Null"),
+                DBMS = Enum.Parse<EnumDBMS>(iniContent[$"Database-{dbEnvironmentType}:DBMS"] ?? "Null"),
                 Host = iniContent[$"Database-{dbEnvironmentType}:Host"] ?? "",
                 Port = int.Parse(iniContent[$"Database-{dbEnvironmentType}:Port"] ?? "-1"),
                 DatabaseName = iniContent[$"Database-{dbEnvironmentType}:DatabaseName"] ?? "",

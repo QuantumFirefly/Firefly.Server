@@ -1,4 +1,5 @@
-﻿using Firefly.Server.Core.LocalConfig;
+﻿using Firefly.Server.Core.Enums;
+using Firefly.Server.Core.LocalConfig;
 using Npgsql;
 
 namespace Firefly.Server.Core.Database
@@ -6,12 +7,14 @@ namespace Firefly.Server.Core.Database
     public class DbConnection : IDisposable
     {
 
+        public readonly EnumDBMS DBMS;
         private readonly NpgsqlConnection _connection;
         public DbConnection(DbConnectionConfig connectionSettings) {
-            if (connectionSettings.DBMS != Enums.EnumDataBaseMS.PostgreSQL)
+            if (connectionSettings.DBMS != Enums.EnumDBMS.PostgreSQL)
             {
                 throw new ArgumentException("Only PostgreSQL is supported as an DBMS.");
             }
+            DBMS = connectionSettings.DBMS;
             _connection = new NpgsqlConnection(connectionSettings.ToConnectionString);
         }
 

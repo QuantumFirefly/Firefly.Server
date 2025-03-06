@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Entitys
 {
-    public class Config
+    public class Config // TODO - Implement IConfig Interface.
     {
 
-        public GeneralConfig General {  get; set; }
+        public GeneralConfig General {  get; set; } = new GeneralConfig();
         public struct GeneralConfig() {
             public string ServerName { get; set; }
             public string ServerDomain { get; set; }

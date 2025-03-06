@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Firefly.Server.Core.Enums
+namespace Firefly.Server.Core.Database.Repository.Queries
 {
-    public enum EnumDataBaseMS
+    public interface IConfigQueries
     {
-        PostgreSQL
+        public string GetAll();
     }
 }
