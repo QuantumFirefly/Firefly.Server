@@ -1,6 +1,6 @@
 ﻿using Firefly.Server.Core;
 using Firefly.Server.Core.Database;
-using Firefly.Server.Core.LocalConfig;
+using Firefly.Server.Core.Database.Repository;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Firefly.Server.Core.Entities.RemoteConfig;
+using Firefly.Server.Core.Entities.LocalConfig;
+
 
 namespace Firefly.Server.Worker
 {
@@ -38,21 +41,38 @@ namespace Firefly.Server.Worker
             using var dbConnection = new DbConnection(localConfig.DbConnectionSettings);
             try {
                 dbConnection.Open();
+
+                _log.Log(LogLevel.Debug, $"Database Connected!");
+
+
+                _log.Log(LogLevel.Info, $"Loading Firefly Config from Database...");
+                RemoteConfig fireflyConfig = new ConfigRepo(dbConnection).GetAll().Result;
+
+                _log.Log(LogLevel.Debug, $"Validating Firefly Config...");
+                List<string> messages = [];
+                if (!fireflyConfig.Validate(ref messages)) {
+                    var exMsg = string.Join("; ", messages);
+                    throw new Exception(exMsg);
+                }
+
+
             } catch (Exception ex) {
                 _log.Log(LogLevel.Fatal, $"{ex.Message}");
                 return;
             }
                 
-            _log.Log(LogLevel.Debug, $"Database Connected!");
+           
+
             
-            // TODO - Provide tool that takes db info from Local Settings. Takes super user password, and creates DB & user/pass
+
+            // TODO - Create tool that takes db info from Local Settings. Takes super user password, and creates DB & user/pass
             
             /* TODO
-             * Connect to Database. Test can run some querys. Ensure Encryption is on.
-             * --> DBconnection object to be passed into Repos via DI.
-             * Upgrade to latest version if needed (Creating tables, alter statements, etc). Is there a library I can use to do this? (EF Migrations? Might be far too verbose)
-             * Import RemoteSettings from database table. Setup repo & queries class for this. (need an appropiate name, FireFlySettings? Probably better to have a parent calss also that has both local & remote settings)
-             * Create IRC Settings - and class hierachy for it.
+             * Create FireflyConfig.cs that holds both RemoteConfig & LocalConfig classes.
+             * Fix new Warnings & Messages
+             * DbUp installation - research for alternatives?
+
+            
              * Start to listen in on IRC port for inbound TCP connections.
              * Classes need abstracting to Interfaces for DI & Unit Testing.
              * 

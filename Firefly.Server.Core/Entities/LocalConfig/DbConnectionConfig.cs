@@ -1,13 +1,16 @@
-﻿using Firefly.Server.Core.Enums;
+﻿using Firefly.Server.Core.Entities.RemoteConfig;
+using Firefly.Server.Core.Enums;
 using Microsoft.Extensions.Configuration;
+using Npgsql;
 
-namespace Firefly.Server.Core.LocalConfig
+namespace Firefly.Server.Core.Entities.LocalConfig
 {
     public class DbConnectionConfig : IConfig
     {
 
         public EnumDBMS DBMS { get; set; }
 
+        public SslMode SslMode { get; set; } = SslMode.Disable;
         public string Host { get; set; } = "";
 
         public int Port { get; set; } = 0;
@@ -18,7 +21,7 @@ namespace Firefly.Server.Core.LocalConfig
 
         public string Password { get; set; } = "";
 
-        public string ToConnectionString => $"Host={Host};Port={Port};Database={DatabaseName};Username={Username};Password={Password};";
+        public string ToConnectionString => $"Host={Host};Port={Port};Database={DatabaseName};Username={Username};Password={Password};Ssl Mode={SslMode}";
 
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;
@@ -57,8 +60,9 @@ namespace Firefly.Server.Core.LocalConfig
         }
 
         public static DbConnectionConfig Build(IConfigurationRoot iniContent, string dbEnvironmentType) {
-            var data = new DbConnectionConfig{
+            var data = new DbConnectionConfig {
                 DBMS = Enum.Parse<EnumDBMS>(iniContent[$"Database-{dbEnvironmentType}:DBMS"] ?? "Null"),
+                SslMode = Enum.Parse<SslMode>(iniContent[$"Database-{dbEnvironmentType}:SslMode"] ?? "Null"),
                 Host = iniContent[$"Database-{dbEnvironmentType}:Host"] ?? "",
                 Port = int.Parse(iniContent[$"Database-{dbEnvironmentType}:Port"] ?? "-1"),
                 DatabaseName = iniContent[$"Database-{dbEnvironmentType}:DatabaseName"] ?? "",

@@ -1,6 +1,8 @@
 ﻿using Firefly.Server.Core.Enums;
-using Firefly.Server.Core.LocalConfig;
 using Npgsql;
+using Dapper;
+using System.Text.Json;
+using Firefly.Server.Core.Entities.LocalConfig;
 
 namespace Firefly.Server.Core.Database
 {
@@ -22,8 +24,11 @@ namespace Firefly.Server.Core.Database
             _connection.Open();
         }
 
-        // TODO - Create mapping functions for Scaler, Query & Non-Query. (Non-query can take in array of tuples for paramters)
-        // TODO - Querys should hit database async
+        public async Task<T> JsonGet<T>(string query) {
+            var jsonResult = await _connection.QuerySingleOrDefaultAsync<string>(query) ?? "";
+
+            return JsonSerializer.Deserialize<T>(jsonResult);
+        }
 
         public void Dispose() {
             GC.SuppressFinalize(this);

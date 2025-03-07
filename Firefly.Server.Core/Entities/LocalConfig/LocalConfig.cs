@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Firefly.Server.Core.Entities.RemoteConfig;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Firefly.Server.Core.LocalConfig
+namespace Firefly.Server.Core.Entities.LocalConfig
 {
     public class LocalConfig : IConfig
     {

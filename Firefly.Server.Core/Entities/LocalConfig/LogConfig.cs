@@ -1,9 +1,10 @@
-﻿using Firefly.Server.Core.Enums;
+﻿using Firefly.Server.Core.Entities.RemoteConfig;
+using Firefly.Server.Core.Enums;
 using Microsoft.Extensions.Configuration;
 using NLog;
 using NLog.Targets;
 
-namespace Firefly.Server.Core.LocalConfig;
+namespace Firefly.Server.Core.Entities.LocalConfig;
 public class LogConfig : IConfig
 {
 
@@ -87,7 +88,7 @@ public class LogConfig : IConfig
             ArchiveDateFormat = iniContent[$"Logging:ArchiveDateFormat"] ?? ""
         };
 
-        
+
 
         return data;
     }
