@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Firefly.Server.Core.Database.Repository.Queries
+namespace Firefly.Server.Core.Database.Repositories.Queries
 {
     public interface IConfigQueries
     {

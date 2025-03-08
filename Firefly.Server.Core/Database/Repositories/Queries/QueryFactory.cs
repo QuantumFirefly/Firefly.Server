@@ -1,6 +1,6 @@
 ﻿using Firefly.Server.Core.Enums;
 
-namespace Firefly.Server.Core.Database.Repository.Queries
+namespace Firefly.Server.Core.Database.Repositories.Queries
 {
     public class QueryFactory(EnumDBMS DBMS)
     {

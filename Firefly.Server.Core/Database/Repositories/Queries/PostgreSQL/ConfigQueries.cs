@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Firefly.Server.Core.Database.Repository.Queries;
+using Firefly.Server.Core.Database.Repositories.Queries;
 
-namespace Firefly.Server.Core.Database.Repository.Queries.PostgreSQL
+namespace Firefly.Server.Core.Database.Repositories.Queries.PostgreSQL
 {
     internal class ConfigQueries : IConfigQueries
     {

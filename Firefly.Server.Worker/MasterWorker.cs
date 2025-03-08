@@ -1,6 +1,6 @@
 ﻿using Firefly.Server.Core;
 using Firefly.Server.Core.Database;
-using Firefly.Server.Core.Database.Repository;
+using Firefly.Server.Core.Database.Repositories;
 using NLog;
 using System;
 using System.Collections.Generic;
