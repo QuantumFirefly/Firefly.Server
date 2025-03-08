@@ -12,8 +12,8 @@ namespace Firefly.Server.Core.Database.Repository
     {
         private readonly IConfigQueries _queries = new QueryFactory(Db.DBMS).GetConfigQueries();
 
-        public async Task<RemoteConfig> GetAll() {
-            return await Db.JsonGet<RemoteConfig>(_queries.GetAll());
+        public async Task<RemoteTopConfig> GetAll() {
+            return await Db.JsonGet<RemoteTopConfig>(_queries.GetAll());
         }
 
     }

@@ -9,6 +9,6 @@ namespace Firefly.Server.Core.Database.Repository.Queries.PostgreSQL
 {
     internal class ConfigQueries : IConfigQueries
     {
-        public string GetAll() => "SELECT jsonb_object_agg(UpperKey, JsonData) FROM Config";
+        public string GetAll() => "SELECT jsonb_object_agg(Category, JsonData) FROM RemoteConfig";
     }
 }

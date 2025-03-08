@@ -11,6 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Firefly.Server.Core.Entities.RemoteConfig;
 using Firefly.Server.Core.Entities.LocalConfig;
+using Firefly.Server.Core.Entities;
+using System.Data.Common;
+using DbConnection = Firefly.Server.Core.Database.DbConnection;
 
 
 namespace Firefly.Server.Worker
@@ -31,7 +34,7 @@ namespace Firefly.Server.Worker
 
             Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
-            if (!ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
+            if (!ImportValidateAndApplyLocalSettings(out LocalTopConfig localConfig, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                 return;
             }
 
@@ -44,16 +47,12 @@ namespace Firefly.Server.Worker
 
                 _log.Log(LogLevel.Debug, $"Database Connected!");
 
-
-                _log.Log(LogLevel.Info, $"Loading Firefly Config from Database...");
-                RemoteConfig fireflyConfig = new ConfigRepo(dbConnection).GetAll().Result;
-
-                _log.Log(LogLevel.Debug, $"Validating Firefly Config...");
-                List<string> messages = [];
-                if (!fireflyConfig.Validate(ref messages)) {
-                    var exMsg = string.Join("; ", messages);
-                    throw new Exception(exMsg);
+                _log.Log(LogLevel.Info, $"Loading Firefly Remote Config from Database...");
+                FireflyConfig fireflyConfig;
+                if (!ImportandValidateRemoteSettings(out fireflyConfig, localConfig, dbConnection, _log)) {
+                    return;
                 }
+
 
 
             } catch (Exception ex) {
@@ -68,7 +67,6 @@ namespace Firefly.Server.Worker
             // TODO - Create tool that takes db info from Local Settings. Takes super user password, and creates DB & user/pass
             
             /* TODO
-             * Create FireflyConfig.cs that holds both RemoteConfig & LocalConfig classes.
              * Fix new Warnings & Messages
              * DbUp installation - research for alternatives?
 
@@ -82,9 +80,25 @@ namespace Firefly.Server.Worker
 
         }
 
-        private static bool ImportValidateAndApplyLocalSettings(out LocalConfig localConfig, string iniFile, string dbEnvironmentType) {
+        private static bool ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, LocalTopConfig localConfig, DbConnection db, ILogger log) {
+            fireflyConfig = new FireflyConfig {
+                Local = localConfig,
+                Remote = new ConfigRepo(db).GetAll().Result
+            };
+
+            log.Log(LogLevel.Debug, $"Validating Firefly Remote Config...");
+            List<string> messages = [];
+            if (!fireflyConfig.Remote.Validate(ref messages)) {
+                var exMsg = string.Join("; ", messages);
+                throw new Exception(exMsg);
+            }
+
+            return true;
+        }
+
+        private static bool ImportValidateAndApplyLocalSettings(out LocalTopConfig localConfig, string iniFile, string dbEnvironmentType) {
             try {
-                localConfig = LocalConfig.Build(iniFile, dbEnvironmentType);
+                localConfig = LocalTopConfig.Build(iniFile, dbEnvironmentType);
 
                 var messages = new List<String>();
                 if (!localConfig.Validate(ref messages)) {
@@ -93,7 +107,7 @@ namespace Firefly.Server.Worker
                 }
             } catch (Exception ex) {
                 Console.WriteLine($"ERROR: Unable to read from {iniFile}. {ex}.");
-                localConfig = new LocalConfig();
+                localConfig = new LocalTopConfig();
                 return false;
             }
 
@@ -101,7 +115,7 @@ namespace Firefly.Server.Worker
                 LogConfig.ApplySettingsToNLog(localConfig.LogSettings);
             } catch (Exception ex) {
                 Console.WriteLine($"ERROR: Error applying config to NLog. {ex}.");
-                localConfig = new LocalConfig();
+                localConfig = new LocalTopConfig();
                 return false;
             }
             

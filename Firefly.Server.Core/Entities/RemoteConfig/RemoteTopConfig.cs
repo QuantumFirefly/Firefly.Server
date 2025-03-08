@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Entities.RemoteConfig
 {
-    public class RemoteConfig : IConfig
+    public class RemoteTopConfig : IConfig
     {
 
         public GeneralConfig General { get; set; } = new GeneralConfig();

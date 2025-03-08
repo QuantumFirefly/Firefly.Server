@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Entities.LocalConfig
 {
-    public class LocalConfig : IConfig
+    public class LocalTopConfig : IConfig
     {
         public DbConnectionConfig DbConnectionSettings { get; set; } = new DbConnectionConfig();
         public LogConfig LogSettings { get; set; } = new LogConfig();
@@ -22,12 +22,12 @@ namespace Firefly.Server.Core.Entities.LocalConfig
             return validationPassed;
         }
 
-        public static LocalConfig Build(string iniFileName, string dbEnvironmentType) {
+        public static LocalTopConfig Build(string iniFileName, string dbEnvironmentType) {
             IConfigurationRoot iniContent = new ConfigurationBuilder()
             .AddIniFile(iniFileName, optional: false, reloadOnChange: true)
             .Build();
 
-            var data = new LocalConfig {
+            var data = new LocalTopConfig {
                 DbConnectionSettings = DbConnectionConfig.Build(iniContent, dbEnvironmentType),
                 LogSettings = LogConfig.Build(iniContent)
             };
