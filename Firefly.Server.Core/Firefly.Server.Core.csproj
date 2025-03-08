@@ -13,6 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Database\MigrationSQL\*.psql" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="dbup-core" Version="6.0.4" />
     <PackageReference Include="dbup-postgresql" Version="6.0.3" />

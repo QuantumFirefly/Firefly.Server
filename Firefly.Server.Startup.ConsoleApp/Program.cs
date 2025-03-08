@@ -1,4 +1,5 @@
 ﻿using Firefly.Server.Worker;
+using System.Reflection;
 
 
 namespace Firefly.Server.Startup.ConsoleApp
@@ -8,7 +9,7 @@ namespace Firefly.Server.Startup.ConsoleApp
     {
         
         public static void Main() {
-            // This is a seperate file because we will have other ways to launch in future. Such as Docker or Windows service.
+            // This is a separate file because we will have other ways to launch in future. Such as Docker or Windows service.
             Worker.Startup.Run("Console");
 
             // Ensure any errors are visible before closing the console window.
