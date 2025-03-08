@@ -69,22 +69,13 @@ namespace Firefly.Server.Worker
                 _log.Log(LogLevel.Fatal, $"{ex.Message}");
                 return;
             }
-                
-           
-
             
-            
-            /* TODO
-             * Fix new Warnings & Messages
-
-            
+            /* TODO   
              * Start to listen in on IRC port for inbound TCP connections.
              * Classes need abstracting to Interfaces for DI & Unit Testing.
              * 
              * Integration & Unit Tests
              */
-
-
         }
 
         private static bool ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, LocalTopConfig localConfig, DbConnection db, ILogger log) {
