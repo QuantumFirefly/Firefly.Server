@@ -13,7 +13,7 @@ namespace Firefly.Server.Core.Database.Repositories
         private readonly IConfigQueries _queries = new QueryFactory(Db.DBMS).GetConfigQueries();
 
         public async Task<RemoteTopConfig> GetAll() {
-            return await Db.JsonGet<RemoteTopConfig>(_queries.GetAll()) ?? throw new Exception("Null JSON returned from database when accessing RemoteTopConfig.");
+            return await Db.JsonGet<RemoteTopConfig>(_queries.GetAll()) ?? throw new Exception("Null JSON returned from database when accessing RemoteConfig.");
         }
 
     }
