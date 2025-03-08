@@ -40,16 +40,15 @@ namespace Firefly.Server.Worker
 
             _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
 
-            _log.Log(LogLevel.Info, $"Connecting to {localConfig.DbConnectionSettings.DBMS} Database {localConfig.DbConnectionSettings.Host}:{localConfig.DbConnectionSettings.Port}...");
-            using var dbConnection = new DbConnection(localConfig.DbConnectionSettings);
+            _log.Log(LogLevel.Info, $"Connecting to {localConfig.DbConnectionSettings?.DBMS} Database {localConfig.DbConnectionSettings?.Host}:{localConfig.DbConnectionSettings?.Port}...");
             try {
+                using var dbConnection = new DbConnection(localConfig.DbConnectionSettings);
                 dbConnection.Open();
 
                 _log.Log(LogLevel.Debug, $"Database Connected!");
 
                 _log.Log(LogLevel.Info, $"Loading Firefly Remote Config from Database...");
-                FireflyConfig fireflyConfig;
-                if (!ImportandValidateRemoteSettings(out fireflyConfig, localConfig, dbConnection, _log)) {
+                if (!ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, localConfig, dbConnection, _log)) {
                     return;
                 }
 

@@ -10,14 +10,14 @@ namespace Firefly.Server.Core.Entities.LocalConfig
 {
     public class LocalTopConfig : IConfig
     {
-        public DbConnectionConfig DbConnectionSettings { get; set; } = new DbConnectionConfig();
-        public LogConfig LogSettings { get; set; } = new LogConfig();
+        public DbConnectionConfig? DbConnectionSettings { get; set; }
+        public LogConfig? LogSettings { get; set; }
 
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;
 
-            if (!DbConnectionSettings.Validate(ref messages)) validationPassed = false;
-            if (!LogSettings.Validate(ref messages)) validationPassed = false;
+            if (DbConnectionSettings != null && !DbConnectionSettings.Validate(ref messages)) validationPassed = false;
+            if (LogSettings != null && !LogSettings.Validate(ref messages)) validationPassed = false;
 
             return validationPassed;
         }

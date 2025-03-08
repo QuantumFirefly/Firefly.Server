@@ -8,18 +8,18 @@ namespace Firefly.Server.Core.Entities.LocalConfig
     public class DbConnectionConfig : IConfig
     {
 
-        public EnumDBMS DBMS { get; set; }
+        public required EnumDBMS DBMS { get; set; }
 
-        public SslMode SslMode { get; set; } = SslMode.Disable;
-        public string Host { get; set; } = "";
+        public required SslMode SslMode { get; set; }
+        public required string Host { get; set; }
 
-        public int Port { get; set; } = 0;
+        public required int Port { get; set; }
 
-        public string DatabaseName { get; set; } = "";
+        public required string DatabaseName { get; set; }
 
-        public string Username { get; set; } = "";
+        public required string Username { get; set; }
 
-        public string Password { get; set; } = "";
+        public required string Password { get; set; }
 
         public string ToConnectionString => $"Host={Host};Port={Port};Database={DatabaseName};Username={Username};Password={Password};Ssl Mode={SslMode}";
 

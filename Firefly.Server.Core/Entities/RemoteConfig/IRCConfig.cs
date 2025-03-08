@@ -8,8 +8,8 @@ namespace Firefly.Server.Core.Entities.RemoteConfig
 {
     public class IRCConfig : IConfig
     {
-        public int Port { get; set; }
-        public bool Enabled { get; set; }
+        public required int Port { get; set; }
+        public required bool Enabled { get; set; }
 
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;

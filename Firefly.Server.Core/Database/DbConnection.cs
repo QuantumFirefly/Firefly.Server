@@ -11,7 +11,9 @@ namespace Firefly.Server.Core.Database
 
         public readonly EnumDBMS DBMS;
         private readonly NpgsqlConnection _connection;
-        public DbConnection(DbConnectionConfig connectionSettings) {
+        public DbConnection(DbConnectionConfig? connectionSettings) {
+            ArgumentNullException.ThrowIfNull(connectionSettings);
+
             if (connectionSettings.DBMS != Enums.EnumDBMS.PostgreSQL)
             {
                 throw new ArgumentException("Only PostgreSQL is supported as an DBMS.");
@@ -24,7 +26,7 @@ namespace Firefly.Server.Core.Database
             _connection.Open();
         }
 
-        public async Task<T> JsonGet<T>(string query) {
+        public async Task<T?> JsonGet<T>(string query) {
             var jsonResult = await _connection.QuerySingleOrDefaultAsync<string>(query) ?? "";
 
             return JsonSerializer.Deserialize<T>(jsonResult);

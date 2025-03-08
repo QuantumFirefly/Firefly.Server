@@ -8,8 +8,8 @@ namespace Firefly.Server.Core.Entities.RemoteConfig
 {
     public class GeneralConfig: IConfig
     {
-        public string ServerName { get; set; }
-        public string ServerDomain { get; set; }
+        public required string ServerName { get; set; }
+        public required string ServerDomain { get; set; }
 
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;

@@ -8,13 +8,13 @@ namespace Firefly.Server.Core.Entities.LocalConfig;
 public class LogConfig : IConfig
 {
 
-    public LogLevel LogLevel { get; set; } = LogLevel.Off;
+    public required LogLevel LogLevel { get; set; }
     private string[] Targets => Target.Split(",");
-    public string Target { get; set; } = "";
-    public string FilePath { get; set; } = "";
+    public required string Target { get; set; }
+    public required string FilePath { get; set; }
 
     private string _archivePath = "";
-    public string ArchivePath {
+    public required string ArchivePath {
         get => _archivePath;
         set {
             // LocalSettings.ini takes % instead of # because hashes are considered comments in ini files.
@@ -22,14 +22,14 @@ public class LogConfig : IConfig
         }
     }
 
-    public FileArchivePeriod ArchiveEvery { get; set; }
+    public required FileArchivePeriod ArchiveEvery { get; set; }
 
-    public ArchiveNumberingMode ArchiveNumbering { get; set; }
+    public required ArchiveNumberingMode ArchiveNumbering { get; set; }
 
-    public int MaxArchiveFiles { get; set; }
+    public required int MaxArchiveFiles { get; set; }
 
     private long _archiveAboveSize;
-    public long ArchiveAboveSize {
+    public required long ArchiveAboveSize {
         get => _archiveAboveSize;
         set {
             // archiveAboveSize is taken from the ini files in MB. Convert to Bytes for NLog
@@ -37,7 +37,7 @@ public class LogConfig : IConfig
         }
     }
 
-    public string ArchiveDateFormat { get; set; } = "";
+    public required string ArchiveDateFormat { get; set; }
 
     public bool Validate(ref List<string> messages) {
         bool validationPassed = true;
@@ -93,7 +93,9 @@ public class LogConfig : IConfig
         return data;
     }
 
-    public static void ApplySettingsToNLog(LogConfig settingsToApply) {
+    public static void ApplySettingsToNLog(LogConfig? settingsToApply) {
+        ArgumentNullException.ThrowIfNull(settingsToApply);
+
         var loggingConfig = LogManager.Configuration;
 
         // Set the LogLevel
