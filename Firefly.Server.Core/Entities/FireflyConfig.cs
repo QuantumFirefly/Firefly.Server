@@ -8,7 +8,7 @@ using Firefly.Server.Core.Entities.RemoteConfig;
 
 namespace Firefly.Server.Core.Entities
 {
-    public class FireflyConfig : IConfig
+    public class FireflyConfig : IFireflyConfig
     {
         public RemoteTopConfig? Remote { get; set; }
         public LocalTopConfig? Local { get; set; }

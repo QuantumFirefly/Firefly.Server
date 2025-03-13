@@ -71,6 +71,8 @@ namespace Firefly.Server.Worker
             }
             
             /* TODO   
+             * _db, _log and FireflyConfig must be switched to utilise Dependency Injection
+             * 
              * Start to listen in on IRC port for inbound TCP connections.
              * Classes need abstracting to Interfaces for DI & Unit Testing.
              * 

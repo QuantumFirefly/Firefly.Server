@@ -1,5 +1,4 @@
-﻿using Firefly.Server.Core.Entities.RemoteConfig;
-using Firefly.Server.Core.Enums;
+﻿using Firefly.Server.Core.Enums;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
 
