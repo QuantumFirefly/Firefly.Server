@@ -18,6 +18,16 @@ namespace Firefly.Server.Core.Entities.LocalConfig
             if (DbConnectionSettings != null && !DbConnectionSettings.Validate(ref messages)) validationPassed = false;
             if (LogSettings != null && !LogSettings.Validate(ref messages)) validationPassed = false;
 
+            if (DbConnectionSettings == null) {
+                validationPassed = false;
+                messages.Add("DbConnectionSettings Missing from ini file.");
+            }
+
+            if (LogSettings == null) {
+                validationPassed = false;
+                messages.Add("LogSettings Missing from ini file.");
+            }
+
             return validationPassed;
         }
 

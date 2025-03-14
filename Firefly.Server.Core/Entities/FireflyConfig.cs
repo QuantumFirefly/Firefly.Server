@@ -18,7 +18,17 @@ namespace Firefly.Server.Core.Entities
 
             if (Local != null && !Local.Validate(ref messages)) validationPassed = false;
             if (Remote != null && !Remote.Validate(ref messages)) validationPassed = false;
-            
+
+            if (Local == null) {
+                validationPassed = false;
+                messages.Add("Local Settings Missing from FireflyConfig.");
+            }
+
+            if (Remote == null) {
+                validationPassed = false;
+                messages.Add("Remote Settings Missing from FireflyConfig.");
+            }
+
             return validationPassed;
         }
     }

@@ -2,9 +2,6 @@
 using Firefly.Server.Core.Database;
 using Firefly.Server.Core.Database.Repositories;
 using NLog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -12,8 +9,9 @@ using System.Threading.Tasks;
 using Firefly.Server.Core.Entities.RemoteConfig;
 using Firefly.Server.Core.Entities.LocalConfig;
 using Firefly.Server.Core.Entities;
-using System.Data.Common;
 using DbConnection = Firefly.Server.Core.Database.DbConnection;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 
 namespace Firefly.Server.Worker
@@ -28,41 +26,38 @@ namespace Firefly.Server.Worker
         public void Start() {
             try {
                 var version = Assembly.GetExecutingAssembly()
-                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-                .InformationalVersion;
+                .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
                 Console.WriteLine($"Firefly Server v{version} Booting up...");
-
                 Console.WriteLine($"Reading {Constants.LOCAL_SETTINGS_INI_FILE}...");
 
-                if (!ImportValidateAndApplyLocalSettings(out LocalTopConfig localConfig, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
+                if (!ImportValidateAndApplyLocalSettings(out LocalTopConfig localConfig, version, Constants.LOCAL_SETTINGS_INI_FILE, Constants.DB_ENVIRONMENT_TYPE)) {
                     return;
                 }
-
-                _log.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
-
-                if (localConfig.DbConnectionSettings == null) throw new Exception($"Database Connection details missing from {Constants.LOCAL_SETTINGS_INI_FILE}. Environment type: {Constants.DB_ENVIRONMENT_TYPE}");
-                var migrator = new Migrations(localConfig.DbConnectionSettings.ToConnectionString, _log);
-
-                _log.Log(LogLevel.Info, $"Checking if {localConfig.DbConnectionSettings?.DBMS} Database {localConfig.DbConnectionSettings?.DatabaseName} Exists on {localConfig.DbConnectionSettings?.Host}:{localConfig.DbConnectionSettings?.Port}...");
-                migrator.CreateDbIfNotExists();
-
-                _log.Log(LogLevel.Info, $"Running migrations...");
-                migrator.RunMigrations();
-
 
                 _log.Log(LogLevel.Info, $"Connecting to {localConfig.DbConnectionSettings?.DBMS} Database {localConfig.DbConnectionSettings?.DatabaseName} {localConfig.DbConnectionSettings?.Host}:{localConfig.DbConnectionSettings?.Port}...");
-            
-                using var dbConnection = new DbConnection(localConfig.DbConnectionSettings);
-                dbConnection.Open();
+                _log.Log(LogLevel.Info, $"Running migrations...");
+                var migrator = new Migrations(localConfig.DbConnectionSettings.ToConnectionString, _log);
+                migrator.CreateDbIfNotExists();
+                migrator.RunMigrations();
 
-                _log.Log(LogLevel.Debug, $"Database Connected!");
+                using var initialDbConnection = new DbConnection(localConfig.DbConnectionSettings, _log);
 
                 _log.Log(LogLevel.Info, $"Loading Firefly Remote Config from Database...");
-                if (!ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, localConfig, dbConnection, _log)) {
+                if (!ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, localConfig, initialDbConnection)) {
                     return;
                 }
 
+                _log.Log(LogLevel.Debug, $"Building DI Service Collection...");
+                var serviceProvider = new ServiceCollection()
+                    .AddSingleton<IFireflyConfig>(fireflyConfig)
+                    .AddSingleton<ILogger>(_log)
+                    .AddScoped<IDbConnection>(p => {
+                        var config = p.GetRequiredService<IFireflyConfig>();
+                        var log = p.GetRequiredService<ILogger>();
+                        return new DbConnection(config.Local?.DbConnectionSettings, log);
+                    })
+                    .BuildServiceProvider();
 
 
             } catch (Exception ex) {
@@ -71,8 +66,6 @@ namespace Firefly.Server.Worker
             }
             
             /* TODO   
-             * _db, _log and FireflyConfig must be switched to utilise Dependency Injection
-             * 
              * Start to listen in on IRC port for inbound TCP connections.
              * Classes need abstracting to Interfaces for DI & Unit Testing.
              * 
@@ -80,13 +73,13 @@ namespace Firefly.Server.Worker
              */
         }
 
-        private static bool ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, LocalTopConfig localConfig, DbConnection db, ILogger log) {
+        private bool ImportandValidateRemoteSettings(out FireflyConfig fireflyConfig, LocalTopConfig localConfig, DbConnection db) {
             fireflyConfig = new FireflyConfig {
                 Local = localConfig,
                 Remote = new ConfigRepo(db).GetAll().Result
             };
 
-            log.Log(LogLevel.Debug, $"Validating Firefly Remote Config...");
+            _log.Log(LogLevel.Debug, $"Validating Firefly Remote Config...");
             List<string> messages = [];
             if (!fireflyConfig.Remote.Validate(ref messages)) {
                 var exMsg = string.Join("; ", messages);
@@ -96,7 +89,7 @@ namespace Firefly.Server.Worker
             return true;
         }
 
-        private static bool ImportValidateAndApplyLocalSettings(out LocalTopConfig localConfig, string iniFile, string dbEnvironmentType) {
+        private bool ImportValidateAndApplyLocalSettings(out LocalTopConfig localConfig, string version, string iniFile, string dbEnvironmentType) {
             try {
                 localConfig = LocalTopConfig.Build(iniFile, dbEnvironmentType);
 
@@ -118,7 +111,8 @@ namespace Firefly.Server.Worker
                 localConfig = new LocalTopConfig();
                 return false;
             }
-            
+
+            _log?.Log(LogLevel.Info, $"Firefly Server v{version} - Local Settings Imported & Validated.");
             return true;
         }
     }
