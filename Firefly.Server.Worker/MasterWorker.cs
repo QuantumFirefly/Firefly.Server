@@ -12,6 +12,8 @@ using Firefly.Server.Core.Entities;
 using DbConnection = Firefly.Server.Core.Database.DbConnection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Firefly.Server.Core.Networking;
+using System.Net.Sockets;
 
 
 namespace Firefly.Server.Worker
@@ -56,6 +58,12 @@ namespace Firefly.Server.Worker
                         var config = p.GetRequiredService<IFireflyConfig>();
                         var log = p.GetRequiredService<ILogger>();
                         return new DbConnection(config.Local?.DbConnectionSettings, log);
+                    })
+                    .AddSingleton<IGlobalState, GlobalState>()
+                    .AddScoped<Func<TcpClient, Guid, IClientConnection>>( p => {
+                        var state = p.GetRequiredService<IGlobalState>();
+                        var log = p.GetRequiredService<ILogger>();
+                        return (tcpClient, clientId) => new ClientConnection(tcpClient, clientId, state, log);
                     })
                     .BuildServiceProvider();
 

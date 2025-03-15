@@ -1,5 +1,4 @@
 ﻿using Firefly.Server.Core.Networking.Protocols;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,10 +8,11 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 
 namespace Firefly.Server.Core.Networking
 {
-    public class ClientConnection
+    public class ClientConnection : IClientConnection
     {
         public Guid Id { get; }
         public IPAddress IP { get; }
@@ -21,7 +21,7 @@ namespace Firefly.Server.Core.Networking
         private NetworkStream _stream { get; }
         private IProtocol _protocol { get; set; }
         private ILogger _log { get; set; }
-        public ClientConnection(TcpClient client, Guid clientId, ILogger log) {
+        public ClientConnection(TcpClient client, Guid clientId, IGlobalState globalState, ILogger log) {
             _tcpconnection = client;
             Id = clientId;
             IP = IPAddress.Parse(((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString());
@@ -29,7 +29,7 @@ namespace Firefly.Server.Core.Networking
             _stream = _tcpconnection.GetStream();
             _log = log;
 
-            _log.Log(LogLevel.Information, $"New connection from {IP}"); // TODO Should take in IProtocol which returns the protocol name?
+            _log.Log(LogLevel.Info, $"New connection from {IP}"); // TODO Should take in IProtocol which returns the protocol name?
         }
 
         
