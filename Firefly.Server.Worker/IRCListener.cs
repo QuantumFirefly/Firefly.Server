@@ -1,14 +1,64 @@
 ﻿using Firefly.Server.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Firefly.Server.Core.Networking;
+using NLog;
+using System.Data;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Firefly.Server.Worker
 {
-    internal class IRCListener(FireflyConfig config)
+    
+    internal class IRCListener
     {
+        private IFireflyConfig _config;
+        private IDbConnection _db;
+        private ILogger _log;
+        private int _port;
+        private IPAddress _ip;
+        private TcpListener _listener;
+        private bool _isRunning;
+        public IRCListener(IFireflyConfig config, IDbConnection db, ILogger log) {
+            _config = config;
+            _db = db;
+            _log = log;
+            _port = _config.Remote.IRC.Port;
+            _ip = _config.Remote.IRC.IP ?? IPAddress.Any;
+       
+            _listener = new TcpListener(_ip, _port);
+        }
+
+        public async Task StartAsync() {
+            _isRunning = true;
+            _listener.Start();
+            _log.Log(LogLevel.Info, $"IRC Server now listening on {_ip}:{_port}");
+
+            while (_isRunning) {
+                try {
+                    TcpClient client = await _listener.AcceptTcpClientAsync();
+                    var clientId = Guid.NewGuid();
+                    var newClientConnection = new ClientConnection(client, clientId); // TODO Move to DI.
+                    
+
+                    _clients.TryAdd(clientId, handler);
+                    _ = handler.ProcessClientAsync();
+                } catch (Exception ex) {
+                    _log.Log(LogLevel.Info, $"Error accepting IRC connection: {ex.Message}");
+                }
+            }
+        }
+
+        public async Task StopAsync() {
+            _isRunning = false;
+            _listener.Stop();
+
+            // Disconnect all clients
+            foreach (var client in _clients.Values) {
+                await client.DisconnectAsync();
+            }
+
+            _log.Log(LogLevel.Info, $"IRC Server now offline.");
+        }
+
         // todo - build this out later.
 
     }

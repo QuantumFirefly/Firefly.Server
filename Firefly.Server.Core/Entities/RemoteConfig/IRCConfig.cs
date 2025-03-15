@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace Firefly.Server.Core.Entities.RemoteConfig
     {
         public required int Port { get; set; }
         public required bool Enabled { get; set; }
+
+        public IPAddress? IP { get; set; }
 
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;

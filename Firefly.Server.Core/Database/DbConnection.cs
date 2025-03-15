@@ -4,6 +4,7 @@ using Dapper;
 using System.Text.Json;
 using Firefly.Server.Core.Entities.LocalConfig;
 using NLog;
+using System.Data;
 
 namespace Firefly.Server.Core.Database
 {
@@ -11,8 +12,9 @@ namespace Firefly.Server.Core.Database
     {
 
         public readonly EnumDBMS DBMS;
-        private readonly NpgsqlConnection _connection;
+        private NpgsqlConnection _connection;
         private readonly ILogger _log;
+        private readonly string _connectionString;
         public DbConnection(DbConnectionConfig? connectionSettings, ILogger log) {
             ArgumentNullException.ThrowIfNull(connectionSettings);
 
@@ -21,7 +23,8 @@ namespace Firefly.Server.Core.Database
                 throw new ArgumentException("Only PostgreSQL is supported as an DBMS.");
             }
             DBMS = connectionSettings.DBMS;
-            _connection = new NpgsqlConnection(connectionSettings.ToConnectionString);
+            _connectionString = connectionSettings.ToConnectionString;
+            _connection = new NpgsqlConnection(_connectionString);
 
             _log = log;
             _log.Log(LogLevel.Trace, $"Opening DB Connection...");
@@ -30,6 +33,7 @@ namespace Firefly.Server.Core.Database
         }
 
         public async Task<T?> JsonGetAsync<T>(string query) {
+            KeepAlive();
             var jsonResult = await _connection.QuerySingleOrDefaultAsync<string>(query) ?? "";
 
             return JsonSerializer.Deserialize<T>(jsonResult);
@@ -43,6 +47,21 @@ namespace Firefly.Server.Core.Database
         }
         ~DbConnection() {
             Dispose(); // Just incase Dispose() is not called!
+        }
+
+        private void KeepAlive() {
+            try {
+                if (_connection == null || _connection.State != ConnectionState.Open) {
+                    _log.Log(LogLevel.Warn, "Reconnecting to the database...");
+                    _connection?.Dispose();
+                    _connection = new NpgsqlConnection(_connectionString);
+                    _connection.Open();
+                    _log.Log(LogLevel.Debug, "Database Connection Reestablished.");
+                }
+            } catch (Exception ex) {
+                _log.Log(LogLevel.Error, $"Database Connection Failed: {ex.Message}");
+                throw;
+            }
         }
     }
 }

@@ -59,6 +59,10 @@ namespace Firefly.Server.Worker
                     })
                     .BuildServiceProvider();
 
+                if (fireflyConfig.Remote.IRC.Enabled) {
+                    // Start IRC Server
+                }
+
 
             } catch (Exception ex) {
                 _log.Log(LogLevel.Fatal, $"{ex.Message}");

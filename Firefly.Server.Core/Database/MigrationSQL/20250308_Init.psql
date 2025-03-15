@@ -18,7 +18,8 @@ VALUES
        )),
     ('IRC', jsonb_build_object(
     'Enabled', True,
-    'Port', 6667
+    'Port', 6667,
+    'IP', null
     ));
 
 
