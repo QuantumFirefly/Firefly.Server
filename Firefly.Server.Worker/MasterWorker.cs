@@ -10,8 +10,8 @@ using Firefly.Server.Core.Entities.RemoteConfig;
 using Firefly.Server.Core.Entities.LocalConfig;
 using Firefly.Server.Core.Entities;
 using DbConnection = Firefly.Server.Core.Database.DbConnection;
+using IDbConnection = Firefly.Server.Core.Database.IDbConnection;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using Firefly.Server.Core.Networking;
 using System.Net.Sockets;
 
@@ -25,7 +25,7 @@ namespace Firefly.Server.Worker
 
         private readonly ILogger _log = logService ?? LogManager.GetCurrentClassLogger();
 
-        public void Start() {
+        public async Task StartAsync() {
             try {
                 var version = Assembly.GetExecutingAssembly()
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
@@ -51,23 +51,38 @@ namespace Firefly.Server.Worker
 
                 _log.Log(LogLevel.Debug, $"Building DI Service Collection...");
                 var serviceProvider = new ServiceCollection()
+
                     .AddSingleton<IFireflyConfig>(fireflyConfig)
+
                     .AddSingleton<ILogger>(_log)
+
                     .AddScoped<IDbConnection>(p => {
-                        var config = p.GetRequiredService<IFireflyConfig>();
-                        var log = p.GetRequiredService<ILogger>();
-                        return new DbConnection(config.Local?.DbConnectionSettings, log);
+                        return new DbConnection(p.GetRequiredService<IFireflyConfig>().Local?.DbConnectionSettings,
+                            p.GetRequiredService<ILogger>());
                     })
+
                     .AddSingleton<IGlobalState, GlobalState>()
+
                     .AddScoped<Func<TcpClient, Guid, IClientConnection>>( p => {
-                        var state = p.GetRequiredService<IGlobalState>();
-                        var log = p.GetRequiredService<ILogger>();
-                        return (tcpClient, clientId) => new ClientConnection(tcpClient, clientId, state, log);
+                        return (tcpClient, clientId) => new ClientConnection(tcpClient, 
+                                                            clientId, 
+                                                            p.GetRequiredService<IGlobalState>(),
+                                                            p.GetRequiredService<ILogger>());
                     })
+
+                    .AddSingleton<IRCListener>(p => new IRCListener(
+                        p.GetRequiredService<IFireflyConfig>(),
+                        p,
+                        p.GetRequiredService<IGlobalState>(),
+                        p.GetRequiredService<IDbConnection>(),
+                        p.GetRequiredService<ILogger>()
+                    ))
+
                     .BuildServiceProvider();
 
                 if (fireflyConfig.Remote.IRC.Enabled) {
-                    // Start IRC Server
+                    var ircListener = serviceProvider.GetRequiredService<IRCListener>();
+                    await ircListener.StartAsync();
                 }
 
 

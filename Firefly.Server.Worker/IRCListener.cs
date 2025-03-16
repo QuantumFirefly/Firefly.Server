@@ -7,6 +7,8 @@ using System;
 using System.Data;
 using System.Net;
 using System.Net.Sockets;
+using DbConnection = Firefly.Server.Core.Database.DbConnection;
+using IDbConnection = Firefly.Server.Core.Database.IDbConnection;
 
 namespace Firefly.Server.Worker
 {
@@ -29,7 +31,8 @@ namespace Firefly.Server.Worker
             _port = _config.Remote.IRC.Port;
             _ip = _config.Remote.IRC.IP ?? IPAddress.Any;
             _globalState = globalState;
-       
+            _serviceProvider = serviceProvider;
+
             _listener = new TcpListener(_ip, _port);
         }
 
@@ -45,15 +48,15 @@ namespace Firefly.Server.Worker
 
                     using (var scope = _serviceProvider.CreateScope()) {
                          var newClientConnection = scope.ServiceProvider.GetRequiredService<Func<TcpClient, Guid, IClientConnection>>()(client, clientId);
+                        
+                        _globalState.GetConnectedClients().AddOrUpdate(
+                            clientId,
+                            newClientConnection,
+                            (key, existingValue) => newClientConnection
+                                );
 
                     }
 
-                        
-                    
-                    
-
-                    //_clients.TryAdd(clientId, handler);
-                    //_ = handler.ProcessClientAsync();
                 } catch (Exception ex) {
                     _log.Log(LogLevel.Info, $"Error accepting IRC connection: {ex.Message}");
                 }

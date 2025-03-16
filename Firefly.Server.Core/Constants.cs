@@ -15,6 +15,7 @@ namespace Firefly.Server.Core
         public const int LOWEST_PORT_ALLOWED = 1;
         public const int HIGHEST_PORT_ALLOWED = 65535;
         public const int MB_TO_BYTES = 1048576;
+        public const int IRC_NETWORK_BUFFER_SIZE = 1024;
         
     }
     

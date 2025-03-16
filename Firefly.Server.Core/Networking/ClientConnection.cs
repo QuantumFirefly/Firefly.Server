@@ -30,6 +30,30 @@ namespace Firefly.Server.Core.Networking
             _log = log;
 
             _log.Log(LogLevel.Info, $"New connection from {IP}"); // TODO Should take in IProtocol which returns the protocol name?
+            ProcessStream();
+        }
+
+        public async Task ProcessStream() {
+            try {
+                byte[] buffer = new byte[Constants.IRC_NETWORK_BUFFER_SIZE];
+                while (_tcpconnection.Connected) {
+                    
+                    int bytesRead = await _stream.ReadAsync(buffer, 0, buffer.Length);
+                    if (bytesRead == 0) {
+                        _log.Log(LogLevel.Info, "Client Disconnected.");
+                        break;
+                    }
+
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    _log.Log(LogLevel.Trace, $"[{IP} : {message}");
+
+                    // Echo message back asynchronously
+                    //byte[] response = Encoding.UTF8.GetBytes($"Server received: {message}");
+                    //await stream.WriteAsync(response, 0, response.Length);
+                }
+            } catch (Exception ex) {
+                
+            }
         }
 
         

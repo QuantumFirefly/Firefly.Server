@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Firefly.Server.Core.Networking;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +10,8 @@ namespace Firefly.Server.Core
 {
     public class GlobalState : IGlobalState
     {
-        // TODO - Concurrent dictionary
+        private readonly ConcurrentDictionary<Guid, IClientConnection> _connectedClients = new ();
+
+        public ConcurrentDictionary<Guid, IClientConnection> GetConnectedClients() => _connectedClients;
     }
 }
