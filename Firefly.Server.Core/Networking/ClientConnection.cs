@@ -52,7 +52,8 @@ namespace Firefly.Server.Core.Networking
                     //await stream.WriteAsync(response, 0, response.Length);
                 }
             } catch (Exception ex) {
-                
+                // TODO - Finally clause - we need to make sure this connection is removed from global state if it disconnects.
+                // Can we check elsewhere also?
             }
         }
 
