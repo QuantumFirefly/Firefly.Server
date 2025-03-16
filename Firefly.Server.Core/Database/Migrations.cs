@@ -11,7 +11,21 @@ namespace Firefly.Server.Core.Database
 {
     public class Migrations(string connectionString, ILogger log)
     {
-        public void CreateDbIfNotExists() {
+         public void RunMigrations() {
+            CreateDbIfNotExists();
+
+            _ = DeployChanges
+                .To.
+                PostgresqlDatabase(connectionString)
+                .LogTo(new DbUpToNLog(log))
+                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(),
+                    filter => filter.StartsWith("Firefly.Server.Core.Database.MigrationSQL") 
+                    && filter.EndsWith(".psql"))
+                .Build()
+                .PerformUpgrade();
+        }
+
+        private void CreateDbIfNotExists() {
             // EnsureDatabase writes to Console and does allow custom ILoggers.
             // Need to intercept the console output.
             var consoleInterceptor = new StringWriter();
@@ -26,18 +40,6 @@ namespace Firefly.Server.Core.Database
 
                 if (debugLog.Length > 0) log.Debug(debugLog);
             }
-        }
-
-        public void RunMigrations() {
-            _ = DeployChanges
-                .To.
-                PostgresqlDatabase(connectionString)
-                .LogTo(new DbUpToNLog(log))
-                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(),
-                    filter => filter.StartsWith("Firefly.Server.Core.Database.MigrationSQL") 
-                    && filter.EndsWith(".psql"))
-                .Build()
-                .PerformUpgrade();
         }
     }
 }

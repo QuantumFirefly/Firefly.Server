@@ -40,7 +40,6 @@ namespace Firefly.Server.Worker
                 _log.Log(LogLevel.Info, $"Connecting to {localConfig.DbConnectionSettings?.DBMS} Database {localConfig.DbConnectionSettings?.DatabaseName} {localConfig.DbConnectionSettings?.Host}:{localConfig.DbConnectionSettings?.Port}...");
                 _log.Log(LogLevel.Info, $"Running migrations...");
                 var migrator = new Migrations(localConfig.DbConnectionSettings.ToConnectionString, _log);
-                migrator.CreateDbIfNotExists();
                 migrator.RunMigrations();
 
                 using var initialDbConnection = new DbConnection(localConfig.DbConnectionSettings, _log);
