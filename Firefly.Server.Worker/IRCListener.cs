@@ -1,6 +1,7 @@
 ﻿using Firefly.Server.Core;
 using Firefly.Server.Core.Entities;
 using Firefly.Server.Core.Networking;
+using Firefly.Server.Core.Networking.Protocols;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
@@ -47,7 +48,8 @@ namespace Firefly.Server.Worker
                     var clientId = Guid.NewGuid();
 
                     using (var scope = _serviceProvider.CreateScope()) {
-                         var newClientConnection = scope.ServiceProvider.GetRequiredService<Func<TcpClient, Guid, IClientConnection>>()(client, clientId);
+                        var protocol = scope.ServiceProvider.GetRequiredService<IRCProtocol>();
+                        var newClientConnection = scope.ServiceProvider.GetRequiredService<Func<TcpClient, Guid, IProtocol, IClientConnection>>()(client, clientId, protocol);
                         
                         _globalState.GetConnectedClients().AddOrUpdate(
                             clientId,
@@ -68,9 +70,9 @@ namespace Firefly.Server.Worker
             _listener.Stop();
 
             // Disconnect all clients
-            //foreach (var client in _clients.Values) {
-            //    await client.DisconnectAsync();
-            //}
+            foreach (var client in _globalState.GetConnectedClients().Values) {
+                await client.DisconnectAsync();
+            }
 
             _log.Log(LogLevel.Info, $"IRC Server now offline.");
         }

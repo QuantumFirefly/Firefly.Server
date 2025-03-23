@@ -14,6 +14,7 @@ using IDbConnection = Firefly.Server.Core.Database.IDbConnection;
 using Microsoft.Extensions.DependencyInjection;
 using Firefly.Server.Core.Networking;
 using System.Net.Sockets;
+using Firefly.Server.Core.Networking.Protocols;
 
 
 namespace Firefly.Server.Worker
@@ -63,12 +64,15 @@ namespace Firefly.Server.Worker
 
                     .AddSingleton<IGlobalState, GlobalState>()
 
-                    .AddScoped<Func<TcpClient, Guid, IClientConnection>>( p => {
-                        return (tcpClient, clientId) => new ClientConnection(tcpClient, 
+                    .AddScoped<Func<TcpClient, Guid, IProtocol, IClientConnection>>( p => {
+                        return (tcpClient, clientId, protocol) => new ClientConnection(tcpClient, 
                                                             clientId, 
                                                             p.GetRequiredService<IGlobalState>(),
-                                                            p.GetRequiredService<ILogger>());
+                                                            p.GetRequiredService<ILogger>(),
+                                                            protocol);
                     })
+
+                    .AddScoped<IRCProtocol>()
 
                     .AddSingleton<IRCListener>(p => new IRCListener(
                         p.GetRequiredService<IFireflyConfig>(),

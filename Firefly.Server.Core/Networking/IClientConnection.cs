@@ -8,5 +8,6 @@ namespace Firefly.Server.Core.Networking
 {
     public interface IClientConnection
     {
+        public Task DisconnectAsync();
     }
 }
