@@ -9,6 +9,6 @@ namespace Firefly.Server.Core.Networking.Protocols
     public interface IProtocol
     {
         public string GetProtocolName();
-        public void Parse(string input);
+        public Task Parse(string input);
     }
 }

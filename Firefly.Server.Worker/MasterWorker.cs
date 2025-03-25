@@ -72,7 +72,17 @@ namespace Firefly.Server.Worker
                                                             protocol);
                     })
 
-                    .AddScoped<IRCProtocol>()
+                    .AddScoped<IUserRepo, UserRepo>(p => {
+                        return new UserRepo(p.GetRequiredService<IDbConnection>());
+                    } )
+
+                    .AddScoped<IRCProtocol>(p => {
+                        return new IRCProtocol(p.GetRequiredService<IFireflyConfig>(),
+                            p.GetRequiredService<IGlobalState>(), 
+                            p.GetRequiredService<IDbConnection>(),
+                            p.GetRequiredService<ILogger>(),
+                            p.GetRequiredService<IUserRepo>());
+                    })
 
                     .AddSingleton<IRCListener>(p => new IRCListener(
                         p.GetRequiredService<IFireflyConfig>(),
@@ -81,6 +91,8 @@ namespace Firefly.Server.Worker
                         p.GetRequiredService<IDbConnection>(),
                         p.GetRequiredService<ILogger>()
                     ))
+
+                    
 
                     .BuildServiceProvider();
 
@@ -96,7 +108,6 @@ namespace Firefly.Server.Worker
             }
             
             /* TODO   
-             * Start to listen in on IRC port for inbound TCP connections.
              * Classes need abstracting to Interfaces for DI & Unit Testing.
              * 
              * Integration & Unit Tests

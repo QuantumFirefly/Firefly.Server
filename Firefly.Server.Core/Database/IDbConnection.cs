@@ -12,6 +12,9 @@ namespace Firefly.Server.Core.Database
 {
     public interface IDbConnection : IDisposable
     {
+        EnumDBMS DBMS { get; }
+
         public Task<T?> JsonGetAsync<T>(string query);
+        public Task<T?> QuerySingleOrDefaultAsync<T>(string query, object? parameters);
     }
 }

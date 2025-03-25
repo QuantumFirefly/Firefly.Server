@@ -22,4 +22,11 @@ VALUES
     'IP', null
     ));
 
-
+CREATE TABLE Users (
+    ID SERIAL PRIMARY KEY,
+    Username VARCHAR(20) NOT NULL UNIQUE,
+    Email VARCHAR(254) NOT NULL UNIQUE,
+    FirstName VARCHAR(100) NOT NULL,
+    MiddleName VARCHAR(100),
+    LastName VARCHAR(100)
+);

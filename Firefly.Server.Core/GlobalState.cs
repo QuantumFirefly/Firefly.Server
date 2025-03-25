@@ -12,6 +12,7 @@ namespace Firefly.Server.Core
     {
         private readonly ConcurrentDictionary<Guid, IClientConnection> _connectedClients = new ();
 
-        public ConcurrentDictionary<Guid, IClientConnection> GetConnectedClients() => _connectedClients;
+        public ConcurrentDictionary<Guid, IClientConnection> GetConnectedClients() => _connectedClients; // TODO - This entire class needs to become an in-memory DB.
+                                                                                                         // Linq is not quick enough
     }
 }

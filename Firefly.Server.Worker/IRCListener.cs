@@ -76,8 +76,5 @@ namespace Firefly.Server.Worker
 
             _log.Log(LogLevel.Info, $"IRC Server now offline.");
         }
-
-        // todo - build this out later.
-
     }
 }

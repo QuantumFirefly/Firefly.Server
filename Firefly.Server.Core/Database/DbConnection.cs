@@ -5,16 +5,20 @@ using System.Text.Json;
 using Firefly.Server.Core.Entities.LocalConfig;
 using NLog;
 using System.Data;
+using System.Xml.Serialization;
 
 namespace Firefly.Server.Core.Database
 {
     public class DbConnection : IDbConnection
     {
 
-        public readonly EnumDBMS DBMS;
         private NpgsqlConnection _connection;
         private readonly ILogger _log;
         private readonly string _connectionString;
+        private readonly EnumDBMS _dbms;
+
+        public EnumDBMS DBMS => _dbms;
+
         public DbConnection(DbConnectionConfig? connectionSettings, ILogger log) {
             ArgumentNullException.ThrowIfNull(connectionSettings);
 
@@ -22,7 +26,7 @@ namespace Firefly.Server.Core.Database
             {
                 throw new ArgumentException("Only PostgreSQL is supported as an DBMS.");
             }
-            DBMS = connectionSettings.DBMS;
+            _dbms = connectionSettings.DBMS;
             _connectionString = connectionSettings.ToConnectionString;
             _connection = new NpgsqlConnection(_connectionString);
 
@@ -30,6 +34,11 @@ namespace Firefly.Server.Core.Database
             _log.Log(LogLevel.Trace, $"Opening DB Connection...");
             _connection.Open();
             _log.Log(LogLevel.Debug, $"Database Connected Opened.");
+        }
+
+        public async Task<T?> QuerySingleOrDefaultAsync<T>(string query, object? parameters = null) {
+            KeepAlive();
+            return await _connection.QuerySingleOrDefaultAsync<T?>(query, parameters);
         }
 
         public async Task<T?> JsonGetAsync<T>(string query) {

@@ -30,7 +30,7 @@ namespace Firefly.Server.Core.Networking
             _log = log;
             _protocol = protocol;
 
-            _log.Log(LogLevel.Info, $"[{protocol.GetProtocolName()}]New connection from {IP}"); // TODO Should take in IProtocol which returns the protocol name?
+            _log.Log(LogLevel.Info, $"[{protocol.GetProtocolName()}] New connection from {IP}");
             _ = ProcessStream();
         }
 
@@ -47,15 +47,14 @@ namespace Firefly.Server.Core.Networking
 
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     _log.Log(LogLevel.Trace, $"[{IP} : {message}");
-                    _protocol.Parse(message);
+                    await _protocol.Parse(message);
 
                     // Echo message back asynchronously
                     //byte[] response = Encoding.UTF8.GetBytes($"Server received: {message}");
                     //await stream.WriteAsync(response, 0, response.Length);
                 }
             } catch (Exception ex) {
-                // TODO - Finally clause - we need to make sure this connection is removed from global state if it disconnects.
-                // Can we check elsewhere also?
+                _log.Log(LogLevel.Error, ex.ToString());
             } finally {
                 await DisconnectAsync();
             }

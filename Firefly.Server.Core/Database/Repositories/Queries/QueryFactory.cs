@@ -10,5 +10,12 @@ namespace Firefly.Server.Core.Database.Repositories.Queries
                 _ => throw new NotSupportedException("Unsupported DBMS type")
             };
         }
+
+        public IUserQueries GetUserQueries() {
+            return DBMS switch {
+                EnumDBMS.PostgreSQL => new PostgreSQL.UserQueries(),
+                _ => throw new NotSupportedException("Unsupported DBMS type")
+            };
+        }
     }
 }
