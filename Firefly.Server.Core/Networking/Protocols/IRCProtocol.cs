@@ -32,7 +32,7 @@ namespace Firefly.Server.Core.Networking.Protocols
                     await parseUSER(restOfText);
                     break;
                 case "NICK":
-                    await parseUSER(restOfText);
+                    await parseNICK(restOfText);
                     break;
                 default:
                     throw new NotImplementedException(message); // TODO - Must remove this at a later date!
@@ -46,6 +46,8 @@ namespace Firefly.Server.Core.Networking.Protocols
 
             // For IRC, we want to record the user they are claiming to be, and then force a login/register via NickServ later.
             _claimedUser = await _userRepo?.GetByUsername(username);
+
+            await recievedNickAndUser();
         }
 
         private async Task parseNICK(string RestOfText) {
@@ -53,6 +55,16 @@ namespace Firefly.Server.Core.Networking.Protocols
 
             // TODO - We need to check here that the user is not already in use by any other connected user.
             // TODO - Need to do some updates to global state here. LINQ will not be sufficient at high volumnes. In-memory DB?
+            await recievedNickAndUser();
+        }
+
+        private async Task recievedNickAndUser() {
+            if (String.IsNullOrEmpty(_claimedRealName) || String.IsNullOrEmpty(_claimedNick)) {
+                return;
+            }
+
+            // TODO - Send successfully connected messages here.
+            // TODO - Send message about requireing NickServ register/identify after MOTD.
         }
         #endregion
 
