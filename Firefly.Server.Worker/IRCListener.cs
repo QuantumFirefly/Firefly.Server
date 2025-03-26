@@ -71,7 +71,7 @@ namespace Firefly.Server.Worker
 
             // Disconnect all clients
             foreach (var client in _globalState.GetConnectedClients().Values) {
-                await client.DisconnectAsync();
+                await client.DisconnectAsync(); // TODO - Must also remove from Global State.
             }
 
             _log.Log(LogLevel.Info, $"IRC Server now offline.");

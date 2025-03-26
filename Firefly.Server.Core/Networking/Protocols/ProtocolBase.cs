@@ -19,6 +19,8 @@ namespace Firefly.Server.Core.Networking.Protocols
         protected readonly IDbConnection _db;
         protected readonly IUserRepo _userRepo;
 
+        protected Func<string, Task> _fnSendMessage;
+
         protected ProtocolBase(string ProtocolName, IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo) {
             _protocolName = ProtocolName;
             _config = config;
@@ -28,8 +30,18 @@ namespace Firefly.Server.Core.Networking.Protocols
             _userRepo = userRepo;
         }
 
+        public void SetFnSendMessage(Func<string, Task> fnSendMessage) {
+            _fnSendMessage = fnSendMessage;
+        } 
+
         public string GetProtocolName() { return _protocolName; }
 
         public abstract Task Parse(string input);
+
+        protected async Task SendMessage(string message) {
+            if (_fnSendMessage != null) {
+                await _fnSendMessage?.Invoke(message);
+            }
+        }
     }
 }

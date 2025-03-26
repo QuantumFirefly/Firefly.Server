@@ -10,5 +10,6 @@ namespace Firefly.Server.Core.Networking.Protocols
     {
         public string GetProtocolName();
         public Task Parse(string input);
+        public void SetFnSendMessage(Func<string, Task> fnSendMessage);
     }
 }

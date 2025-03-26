@@ -22,7 +22,7 @@ namespace Firefly.Server.Core.Networking.Protocols
         private string _claimedRealName;
         private User? _claimedUser;
 
-        public override async Task Parse(string message) {
+        public override async Task Parse(string message) { // TODO - Must consider multiple messages & partial messages. IRC is split by '\r\n'
             string[] firstAndRemaining = message.Split(" ", 2);
             string firstWord = firstAndRemaining[0];
             string restOfText = firstAndRemaining[1];
@@ -34,8 +34,6 @@ namespace Firefly.Server.Core.Networking.Protocols
                 case "NICK":
                     await parseNICK(restOfText);
                     break;
-                default:
-                    throw new NotImplementedException(message); // TODO - Must remove this at a later date!
             }
         }
 
@@ -53,8 +51,6 @@ namespace Firefly.Server.Core.Networking.Protocols
         private async Task parseNICK(string RestOfText) {
             _claimedNick = RestOfText;
 
-            // TODO - We need to check here that the user is not already in use by any other connected user.
-            // TODO - Need to do some updates to global state here. LINQ will not be sufficient at high volumnes. In-memory DB?
             await recievedNickAndUser();
         }
 
@@ -63,7 +59,11 @@ namespace Firefly.Server.Core.Networking.Protocols
                 return;
             }
 
-            // TODO - Send successfully connected messages here.
+            //_fnSendMessage?.Invoke(_config.Remote.IRC.MOTD); 
+
+            // TODO - Send successfully connected messages here. That's one code if MOTD exists or another if null.
+            await SendMessage("422"); // Here as a test
+
             // TODO - Send message about requireing NickServ register/identify after MOTD.
         }
         #endregion

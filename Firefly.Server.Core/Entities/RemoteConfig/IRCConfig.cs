@@ -14,6 +14,8 @@ namespace Firefly.Server.Core.Entities.RemoteConfig
 
         public IPAddress? IP { get; set; }
 
+        public string? MOTD { get; set; }
+
         public bool Validate(ref List<string> messages) {
             bool validationPassed = true;
 

@@ -19,7 +19,8 @@ VALUES
     ('IRC', jsonb_build_object(
     'Enabled', True,
     'Port', 6667,
-    'IP', null
+    'IP', null,
+    'MOTD', 'You are connected to a Firefly Server via the IRC Protocol'
     ));
 
 CREATE TABLE Users (

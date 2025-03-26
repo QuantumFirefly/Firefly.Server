@@ -29,6 +29,7 @@ namespace Firefly.Server.Core.Networking
             _stream = _tcpconnection.GetStream();
             _log = log;
             _protocol = protocol;
+            _protocol.SetFnSendMessage(SendMessageAsync);
 
             _log.Log(LogLevel.Info, $"[{protocol.GetProtocolName()}] New connection from {IP}");
             _ = ProcessStream();
@@ -48,10 +49,9 @@ namespace Firefly.Server.Core.Networking
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     _log.Log(LogLevel.Trace, $"[{IP} : {message}");
                     await _protocol.Parse(message);
+                    // TODO - May contain multiple or 'partial' messages. IRC typically uses \r\n as a terminator.
 
-                    // Echo message back asynchronously
-                    //byte[] response = Encoding.UTF8.GetBytes($"Server received: {message}");
-                    //await stream.WriteAsync(response, 0, response.Length);
+
                 }
             } catch (Exception ex) {
                 _log.Log(LogLevel.Error, ex.ToString());
@@ -61,9 +61,16 @@ namespace Firefly.Server.Core.Networking
         }
 
         public async Task DisconnectAsync() {
-            _tcpconnection.Close();
+            _tcpconnection.Close(); // TODO - Need to remove "dead" client Connection from Global State.
         }
 
-        
+        internal async Task SendMessageAsync(string message) {
+            if (_tcpconnection.Connected) {
+                byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+                await _stream.WriteAsync(messageBytes, 0, messageBytes.Length);
+            }
+        }
+
+
     }
 }
