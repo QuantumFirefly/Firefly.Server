@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Firefly.Server.Core.Networking;
 using System.Net.Sockets;
 using Firefly.Server.Core.Networking.Protocols;
+using Firefly.Server.Core.Networking.Protocols.IRC;
 
 
 namespace Firefly.Server.Worker

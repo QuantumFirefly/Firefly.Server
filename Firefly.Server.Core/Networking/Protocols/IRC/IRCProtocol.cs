@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace Firefly.Server.Core.Networking.Protocols
+namespace Firefly.Server.Core.Networking.Protocols.IRC
 {
     public class IRCProtocol : ProtocolBase
     {
@@ -117,7 +117,7 @@ namespace Firefly.Server.Core.Networking.Protocols
 
         #region Other Methods
         private async Task recievedNickAndUser() {
-            if (String.IsNullOrEmpty(_claimedRealName) || String.IsNullOrEmpty(_claimedNick)) {
+            if (string.IsNullOrEmpty(_claimedRealName) || string.IsNullOrEmpty(_claimedNick)) {
                 return;
             }
 

@@ -2,6 +2,7 @@
 using Firefly.Server.Core.Entities;
 using Firefly.Server.Core.Networking;
 using Firefly.Server.Core.Networking.Protocols;
+using Firefly.Server.Core.Networking.Protocols.IRC;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using System;
