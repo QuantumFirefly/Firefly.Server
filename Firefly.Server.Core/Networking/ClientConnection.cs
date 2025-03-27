@@ -49,9 +49,6 @@ namespace Firefly.Server.Core.Networking
                     string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
                     _log.Log(LogLevel.Trace, $"[{IP} : {message}");
                     await _protocol.Parse(message);
-                    // TODO - May contain multiple or 'partial' messages. IRC typically uses \r\n as a terminator.
-
-
                 }
             } catch (Exception ex) {
                 _log.Log(LogLevel.Error, ex.ToString());

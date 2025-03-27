@@ -20,7 +20,9 @@ VALUES
     'Enabled', True,
     'Port', 6667,
     'IP', null,
-    'MOTD', 'You are connected to a Firefly Server via the IRC Protocol'
+    'MOTD', 'You are connected to a Firefly Server via the IRC Protocol.
+IRC is provided as a legacy text-only protocol and we strongly suggest you connect using a Matrix client.
+Have a great time!'
     ));
 
 CREATE TABLE Users (
