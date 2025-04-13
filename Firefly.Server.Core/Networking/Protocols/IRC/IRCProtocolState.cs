@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC
 {
-    internal class IRCProtocolState : ProtocolStateBase
+    internal class IRCProtocolState(IFireflyConfig state) : ProtocolStateBase(state)
     {
-
-        public IRCProtocolState(IFireflyConfig state) : base(state) {
-        }
 
         internal string? ClaimedNick;
         internal string? ClaimedRealName;
