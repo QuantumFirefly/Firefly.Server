@@ -58,14 +58,17 @@ namespace Firefly.Server.Core.Database
             Dispose(); // Just incase Dispose() is not called!
         }
 
+        private readonly object _lock = new();
         private void KeepAlive() {
             try {
-                if (_connection == null || _connection.State != ConnectionState.Open) {
-                    _log.Log(LogLevel.Warn, "Reconnecting to the database...");
-                    _connection?.Dispose();
-                    _connection = new NpgsqlConnection(_connectionString);
-                    _connection.Open();
-                    _log.Log(LogLevel.Debug, "Database Connection Reestablished.");
+                lock (_lock) {
+                    if (_connection == null || _connection.State != ConnectionState.Open) {
+                        _log.Log(LogLevel.Warn, "Reconnecting to the database...");
+                        _connection?.Dispose();
+                        _connection = new NpgsqlConnection(_connectionString);
+                        _connection.Open();
+                        _log.Log(LogLevel.Debug, "Database Connection Reestablished.");
+                    }
                 }
             } catch (Exception ex) {
                 _log.Log(LogLevel.Error, $"Database Connection Failed: {ex.Message}");

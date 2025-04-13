@@ -19,10 +19,6 @@ namespace Firefly.Server.Core.Networking.Protocols
         protected readonly IDbConnection _db;
         protected readonly IUserRepo _userRepo;
 
-        protected readonly string _domain;
-        protected bool _isAuthenticated = false;
-        protected bool _isSSL = false;
-
         protected Func<string, Task> _fnSendMessage;
 
         protected ProtocolBase(string ProtocolName, IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo) {
@@ -32,8 +28,6 @@ namespace Firefly.Server.Core.Networking.Protocols
             _db = db;
             _log = log;
             _userRepo = userRepo;
-
-            _domain = _config?.Remote?.General?.ServerDomain ?? "";
         }
 
         public void SetFnSendMessage(Func<string, Task> fnSendMessage) {
