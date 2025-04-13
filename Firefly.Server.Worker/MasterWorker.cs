@@ -102,7 +102,8 @@ namespace Firefly.Server.Worker
                     ))
 
                     
-
+                    // TODO - Update all above to take in FireflyContext instead of individual things.
+                    // TODO - Go through IRCProtocol and add all sub classes to DI.
 
 
                     .BuildServiceProvider();
