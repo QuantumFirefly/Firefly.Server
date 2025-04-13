@@ -55,15 +55,23 @@ namespace Firefly.Server.Worker
                 var serviceProvider = new ServiceCollection()
 
                     .AddSingleton<IFireflyConfig>(fireflyConfig)
-
+                    .AddSingleton<IGlobalState, GlobalState>()
                     .AddSingleton<ILogger>(_log)
+
+                    .AddTransient<IFireflyContext>(p => {
+                        return new FireflyContext(p.GetRequiredService<IFireflyConfig>(),
+                            p.GetRequiredService<IGlobalState>(),
+                            p.GetRequiredService<ILogger>());
+                    })
+
+
 
                     .AddScoped<IDbConnection>(p => {
                         return new DbConnection(p.GetRequiredService<IFireflyConfig>().Local?.DbConnectionSettings,
                             p.GetRequiredService<ILogger>());
                     })
 
-                    .AddSingleton<IGlobalState, GlobalState>()
+                    
 
                     .AddScoped<Func<TcpClient, Guid, IProtocol, IClientConnection>>( p => {
                         return (tcpClient, clientId, protocol) => new ClientConnection(tcpClient, 
@@ -94,6 +102,8 @@ namespace Firefly.Server.Worker
                     ))
 
                     
+
+
 
                     .BuildServiceProvider();
 
