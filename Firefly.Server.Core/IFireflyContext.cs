@@ -1,4 +1,5 @@
-﻿using Firefly.Server.Core.Entities;
+﻿using Firefly.Server.Core.Database;
+using Firefly.Server.Core.Entities;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -13,5 +14,6 @@ namespace Firefly.Server.Core
         IFireflyConfig Config { get; }
         IGlobalState GlobalState { get; }
         ILogger Logger { get; }
+        IDbConnection DbConnection { get; }
     }
 }

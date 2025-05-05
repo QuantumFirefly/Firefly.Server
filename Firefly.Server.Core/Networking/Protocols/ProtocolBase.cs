@@ -13,21 +13,19 @@ namespace Firefly.Server.Core.Networking.Protocols
     public abstract class ProtocolBase : IProtocol
     {
         private readonly string _protocolName;
-        protected readonly IFireflyConfig _config;
+        protected readonly IFireflyContext _context;
+        protected readonly IDbContext _dbContext;
+
         protected readonly ILogger _log;
-        protected readonly IGlobalState _globalState;
-        protected readonly IDbConnection _db;
-        protected readonly IUserRepo _userRepo;
 
         protected Func<string, Task> _fnSendMessage;
 
-        protected ProtocolBase(string ProtocolName, IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo) {
+        protected ProtocolBase(string ProtocolName, IFireflyContext context, IDbContext dbContext) {
             _protocolName = ProtocolName;
-            _config = config;
-            _globalState = globalState;
-            _db = db;
-            _log = log;
-            _userRepo = userRepo;
+            _context = context;
+            _dbContext = dbContext;
+
+            _log = context.Logger;
         }
 
         public void SetFnSendMessage(Func<string, Task> fnSendMessage) {

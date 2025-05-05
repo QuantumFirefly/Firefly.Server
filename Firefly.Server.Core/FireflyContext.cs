@@ -9,21 +9,11 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core
 {
-    public class FireflyContext : IFireflyContext
+    public class FireflyContext(IFireflyConfig config, IGlobalState globalState, ILogger logger, IDbConnection dbConnection) : IFireflyContext
     {
-        public IFireflyConfig Config { get; }
-        public IGlobalState GlobalState { get; }
-        public ILogger Logger { get; }
-
-        public FireflyContext(
-        IFireflyConfig config,
-        IGlobalState globalState,
-        ILogger logger) {
-            Config = config;
-            GlobalState = globalState;
-            Logger = logger;
-        }
-
-        
+        public IFireflyConfig Config { get; } = config;
+        public IGlobalState GlobalState { get; } = globalState;
+        public ILogger Logger { get; } = logger;
+        public IDbConnection DbConnection { get; } = dbConnection;
     }
 }

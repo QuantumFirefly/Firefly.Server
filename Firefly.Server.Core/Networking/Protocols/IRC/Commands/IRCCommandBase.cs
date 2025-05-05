@@ -11,30 +11,25 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
-    internal abstract class IRCCommandBase
+    public abstract class IRCCommandBase
     {
-        protected readonly IFireflyConfig _config;
-        protected readonly IGlobalState _globalState;
-        protected readonly IDbConnection _db;
-        protected readonly ILogger _log;
-        protected readonly IUserRepo _userRepo;
+        protected readonly IFireflyContext _context;
+        protected readonly IDbContext _dbContext;
+        
 
         protected IRCProtocolState _state;
         protected bool _mustBeAuthenticated;
 
         protected Func<string, Task> _fnSendMessage;
 
-        internal IRCCommandBase(IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo, IRCProtocolState state, Func<string, Task> fnSendMessage) {
-            _config = config;
-            _globalState = globalState;
-            _db = db;
-            _log = log;
-            _userRepo = userRepo;
+        public IRCCommandBase(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage) {
+            _context = context;
+            _dbContext = dbContext;
 
             _state = state;
             _fnSendMessage = fnSendMessage;
         }
-        internal async Task Execute(string args) {
+        public async Task Execute(string args) {
             if (_mustBeAuthenticated) {
                 await RequestNickServMessage();
                 return;
@@ -72,7 +67,7 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
         }
 
         private async Task SendMOTD() {
-            string? motd = _config?.Remote?.IRC?.MOTD;
+            string? motd = _context.Config?.Remote?.IRC?.MOTD;
 
             if (motd != null) {
                 string[] motdLines = motd.Split("\n");

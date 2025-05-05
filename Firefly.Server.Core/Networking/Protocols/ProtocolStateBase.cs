@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols
 {
-    internal class ProtocolStateBase
+    public class ProtocolStateBase
     {
         private readonly IFireflyConfig _config;
-        internal string Domain => _config?.Remote?.General?.ServerDomain ?? "";
-        internal bool IsAuthenticated = false;
-        internal bool IsSSL = false;
+        public string Domain => _config?.Remote?.General?.ServerDomain ?? "";
+        public bool IsAuthenticated = false;
+        public bool IsSSL = false;
 
-        internal ProtocolStateBase(IFireflyConfig config) {
+        public ProtocolStateBase(IFireflyConfig config) {
             _config = config;
         }
         

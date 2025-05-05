@@ -26,14 +26,16 @@ namespace Firefly.Server.Worker
         private IServiceProvider _serviceProvider;
         private bool _isRunning;
         private IGlobalState _globalState;
-        public IRCListener(IFireflyConfig config, IServiceProvider serviceProvider, IGlobalState globalState, IDbConnection db, ILogger log) {
-            _config = config;
-            _db = db;
-            _log = log;
+        public IRCListener(IFireflyContext context, IServiceProvider serviceProvider) {
+            _config = context.Config;
+            _db = context.DbConnection;
+            _log = context.Logger;
+            _globalState = context.GlobalState;
+
+            _serviceProvider = serviceProvider;
+
             _port = _config.Remote.IRC.Port;
             _ip = _config.Remote.IRC.IP ?? IPAddress.Any;
-            _globalState = globalState;
-            _serviceProvider = serviceProvider;
 
             _listener = new TcpListener(_ip, _port);
         }

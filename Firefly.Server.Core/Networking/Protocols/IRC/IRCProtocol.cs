@@ -10,11 +10,12 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC
 {
     public class IRCProtocol : ProtocolBase
     {
-        public IRCProtocol(IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo)
-            : base("IRC", config, globalState, db, log, userRepo)  {
-            _state = new IRCProtocolState(_config);
+        public IRCProtocol(IFireflyContext context, IDbContext dbContext)
+            : base("IRC", context, dbContext)  {
+            _state = new IRCProtocolState(context.Config);
             InitCommands();
         }
+
 
         private readonly Dictionary<string, IRCCommandBase> _commands = new(StringComparer.OrdinalIgnoreCase);
         private readonly StringBuilder _receivedTcpStream = new();
@@ -63,12 +64,14 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC
             await command.Execute(restOfText);
         }
 
-        private void InitCommands() { // TODO, can we use DI to load these?
+        private void InitCommands() {
+            
             _commands.Add("NICK", new Nick(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            _commands.Add("USER", new User(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            _commands.Add("PING", new Ping(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            _commands.Add("CAP", new Cap(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            _commands.Add("PRIVMSG", new PrivMsg(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
+            //_commands.Add("NICK", new Nick(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
+            //_commands.Add("USER", new User(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
+            //_commands.Add("PING", new Ping(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
+            //_commands.Add("CAP", new Cap(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
+            //_commands.Add("PRIVMSG", new PrivMsg(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
         }
     }
 }

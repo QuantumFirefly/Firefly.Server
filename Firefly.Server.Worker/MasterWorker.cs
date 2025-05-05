@@ -52,61 +52,7 @@ namespace Firefly.Server.Worker
                 }
 
                 _log.Log(LogLevel.Debug, $"Building DI Service Collection...");
-                var serviceProvider = new ServiceCollection()
-
-                    .AddSingleton<IFireflyConfig>(fireflyConfig)
-                    .AddSingleton<IGlobalState, GlobalState>()
-                    .AddSingleton<ILogger>(_log)
-
-                    .AddTransient<IFireflyContext>(p => {
-                        return new FireflyContext(p.GetRequiredService<IFireflyConfig>(),
-                            p.GetRequiredService<IGlobalState>(),
-                            p.GetRequiredService<ILogger>());
-                    })
-
-
-
-                    .AddScoped<IDbConnection>(p => {
-                        return new DbConnection(p.GetRequiredService<IFireflyConfig>().Local?.DbConnectionSettings,
-                            p.GetRequiredService<ILogger>());
-                    })
-
-                    
-
-                    .AddScoped<Func<TcpClient, Guid, IProtocol, IClientConnection>>( p => {
-                        return (tcpClient, clientId, protocol) => new ClientConnection(tcpClient, 
-                                                            clientId, 
-                                                            p.GetRequiredService<IGlobalState>(),
-                                                            p.GetRequiredService<ILogger>(),
-                                                            protocol);
-                    })
-
-                    .AddScoped<IUserRepo, UserRepo>(p => {
-                        return new UserRepo(p.GetRequiredService<IDbConnection>());
-                    } )
-
-                    .AddScoped<IRCProtocol>(p => {
-                        return new IRCProtocol(p.GetRequiredService<IFireflyConfig>(),
-                            p.GetRequiredService<IGlobalState>(), 
-                            p.GetRequiredService<IDbConnection>(),
-                            p.GetRequiredService<ILogger>(),
-                            p.GetRequiredService<IUserRepo>());
-                    })
-
-                    .AddSingleton<IRCListener>(p => new IRCListener(
-                        p.GetRequiredService<IFireflyConfig>(),
-                        p,
-                        p.GetRequiredService<IGlobalState>(),
-                        p.GetRequiredService<IDbConnection>(),
-                        p.GetRequiredService<ILogger>()
-                    ))
-
-                    
-                    // TODO - Update all above to take in FireflyContext instead of individual things.
-                    // TODO - Go through IRCProtocol and add all sub classes to DI.
-
-
-                    .BuildServiceProvider();
+                var serviceProvider = DependencyInjection.Initalise(fireflyConfig, _log);
 
                 if (fireflyConfig.Remote.IRC.Enabled) {
                     var ircListener = serviceProvider.GetRequiredService<IRCListener>();

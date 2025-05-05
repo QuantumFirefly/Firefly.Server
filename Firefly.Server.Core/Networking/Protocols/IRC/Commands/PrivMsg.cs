@@ -13,8 +13,8 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
     internal partial class PrivMsg : IRCCommandBase
     {
-        internal PrivMsg(IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo, IRCProtocolState state, Func<string, Task> fnSendMessage)
-            : base(config, globalState, db, log, userRepo, state, fnSendMessage) {
+        internal PrivMsg(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+            : base(context, dbContext, state, fnSendMessage) {
             _mustBeAuthenticated = false;
         }
 

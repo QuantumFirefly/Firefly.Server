@@ -13,8 +13,8 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
     internal class User : IRCCommandBase
     {
-        internal User(IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo, IRCProtocolState state, Func<string, Task> fnSendMessage)
-            : base(config, globalState, db, log, userRepo, state, fnSendMessage) {
+        internal User(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+            : base(context, dbContext, state, fnSendMessage) {
 
         }
 
@@ -23,7 +23,7 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
             string username = args.Split(" ", 2)[0];
 
             // For IRC, we want to record the user they are claiming to be, and then force a login/register via NickServ later.
-            _state.ClaimedUser = await _userRepo?.GetByUsername(username);
+            _state.ClaimedUser = await _dbContext.User.GetByUsername(username);
 
             await recievedNickAndUser();
         }

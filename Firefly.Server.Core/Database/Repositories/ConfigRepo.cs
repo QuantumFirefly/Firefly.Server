@@ -8,7 +8,7 @@ using Firefly.Server.Core.Entities.RemoteConfig;
 
 namespace Firefly.Server.Core.Database.Repositories
 {
-    public class ConfigRepo(DbConnection Db)
+    public class ConfigRepo(IDbConnection Db) : IConfigRepo
     {
         private readonly IConfigQueries _queries = new QueryFactory(Db.DBMS).GetConfigQueries();
 

@@ -13,8 +13,8 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
     internal class Nick : IRCCommandBase
     {
-        internal Nick(IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo, IRCProtocolState state, Func<string, Task> fnSendMessage)
-            : base(config, globalState, db, log, userRepo, state, fnSendMessage) {
+        internal Nick(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+            : base(context, dbContext, state, fnSendMessage) {
             
         }
 

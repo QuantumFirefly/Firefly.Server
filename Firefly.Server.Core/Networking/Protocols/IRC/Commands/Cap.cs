@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
-    internal class Cap : IRCCommandBase
+    public class Cap : IRCCommandBase
     {
-        internal Cap(IFireflyConfig config, IGlobalState globalState, IDbConnection db, ILogger log, IUserRepo userRepo, IRCProtocolState state, Func<string, Task> fnSendMessage)
-            : base(config, globalState, db, log, userRepo, state, fnSendMessage) {
+        public Cap(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+            : base(context, dbContext, state, fnSendMessage) {
 
         }
 
