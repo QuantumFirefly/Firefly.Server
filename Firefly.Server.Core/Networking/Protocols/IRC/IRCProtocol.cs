@@ -10,10 +10,14 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC
 {
     public class IRCProtocol : ProtocolBase
     {
-        public IRCProtocol(IFireflyContext context, IDbContext dbContext)
-            : base("IRC", context, dbContext)  {
+        public IRCProtocol(
+            IFireflyContext context,
+            IDbContext dbContext,
+            Func<IRCProtocolState, Func<string, Task>, IEnumerable<IRCCommandBase>> commandFactory)
+            : base("IRC", context, dbContext)
+        {
             _state = new IRCProtocolState(context.Config);
-            InitCommands();
+            InitCommands(commandFactory(_state, SendMessageAsync));
         }
 
 
@@ -64,14 +68,14 @@ namespace Firefly.Server.Core.Networking.Protocols.IRC
             await command.Execute(restOfText);
         }
 
-        private void InitCommands() {
-            
-            _commands.Add("NICK", new Nick(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            //_commands.Add("NICK", new Nick(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            //_commands.Add("USER", new User(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            //_commands.Add("PING", new Ping(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            //_commands.Add("CAP", new Cap(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
-            //_commands.Add("PRIVMSG", new PrivMsg(_config, _globalState, _db, _log, _userRepo, _state, SendMessageAsync));
+        private void InitCommands(IEnumerable<IRCCommandBase> commands)
+        {
+            foreach (var command in commands)
+            {
+                string commandName = command.GetType().Name.ToUpper();
+                _commands.Add(commandName, command);
+            }
         }
+
     }
 }

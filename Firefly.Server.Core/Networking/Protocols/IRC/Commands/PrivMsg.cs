@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
-    internal partial class PrivMsg : IRCCommandBase
+    public partial class PrivMsg : IRCCommandBase
     {
-        internal PrivMsg(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+        public PrivMsg(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
             : base(context, dbContext, state, fnSendMessage) {
             _mustBeAuthenticated = false;
         }

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
-    internal class User : IRCCommandBase
+    public class User : IRCCommandBase
     {
-        internal User(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+        public User(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
             : base(context, dbContext, state, fnSendMessage) {
 
         }

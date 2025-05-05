@@ -70,13 +70,15 @@ namespace Firefly.Server.Worker
                 p
              ))
 
-            .AddScoped<Func<IRCProtocolState, Func<string, Task>, Cap>>(p => {
-                 return (state, fnSendMessage) => new Cap(p.GetRequiredService<IFireflyContext>(),
-                                                     p.GetRequiredService<IDbContext>(),
-                                                     state,
-                                                     fnSendMessage
-                                                     );
-             });
+            .AddTransient<Func<IRCProtocolState, Func<string, Task>, IEnumerable<IRCCommandBase>>>(sp =>
+                (state, sendMessage) => new IRCCommandBase[] {
+                    new Nick(sp.GetRequiredService<IFireflyContext>(), sp.GetRequiredService<IDbContext>(), state, sendMessage),
+                    new Core.Networking.Protocols.IRC.Commands.User(sp.GetRequiredService<IFireflyContext>(), sp.GetRequiredService<IDbContext>(), state, sendMessage),
+                    new Ping(sp.GetRequiredService<IFireflyContext>(), sp.GetRequiredService<IDbContext>(), state, sendMessage),
+                    new Cap(sp.GetRequiredService<IFireflyContext>(), sp.GetRequiredService<IDbContext>(), state, sendMessage),
+                    new PrivMsg(sp.GetRequiredService<IFireflyContext>(), sp.GetRequiredService<IDbContext>(), state, sendMessage)
+                });
+
 
         }
     }

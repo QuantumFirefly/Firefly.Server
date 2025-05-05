@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
-    internal partial class PrivMsg // NickServ
+    public partial class PrivMsg // NickServ
     {
         private async Task NickServ(string msg) {
             string[] tempSplitter = msg.Split(' ', 2);

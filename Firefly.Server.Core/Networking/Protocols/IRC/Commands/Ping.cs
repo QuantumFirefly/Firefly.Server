@@ -11,15 +11,14 @@ using System.Threading.Tasks;
 
 namespace Firefly.Server.Core.Networking.Protocols.IRC.Commands
 {
-    internal class Ping : IRCCommandBase
+    public class Ping : IRCCommandBase
     {
-        internal Ping(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
+        public Ping(IFireflyContext context, IDbContext dbContext, IRCProtocolState state, Func<string, Task> fnSendMessage)
             : base(context, dbContext, state, fnSendMessage) {
 
         }
 
         protected override async Task ExecuteCommand(string args) {
-
             await SendMessageAsync($"PONG {_state.Domain} {args}");
         }
     }
